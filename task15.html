@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ЕГЭ Математика - Задание 15</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #c5d5d4;
+            color: #1a1a1a;
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+        .header {
+            background-color: #c5d5d4;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #a8b8b7;
+            position: sticky; top: 0; z-index: 100;
+        }
+        .header h1 { font-size: 16px; color: #0d4f4f; font-weight: 400; flex: 1; }
+        .controls {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 15px; background: white;
+            border-bottom: 1px solid #a8b8b7;
+            position: sticky; top: 45px; z-index: 99;
+        }
+        .unsolved-counter {
+            background: #ffe0e0; color: #c0392b;
+            padding: 6px 12px; border-radius: 5px; font-size: 14px;
+        }
+        .sort-btn {
+            background: white; border: 1px solid #0d4f4f; color: #0d4f4f;
+            padding: 8px 16px; border-radius: 5px; cursor: pointer; font-size: 14px;
+        }
+        .sort-btn:hover { background: #0d4f4f; color: white; }
+        .tasks-container { max-width: 900px; margin: 0 auto; padding: 15px; }
+        .task-block {
+            background: white; border-radius: 10px; padding: 20px;
+            margin-bottom: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        .task-title {
+            font-size: 17px; color: #0a0a0a; font-weight: 400;
+            margin-bottom: 15px; background: #B0E0E6;
+            padding: 10px 15px; border-radius: 5px; display: inline-block;
+        }
+        .task-header {            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 15px; flex-wrap: wrap; gap: 10px;
+        }
+        .task-status { font-size: 13px; padding: 4px 10px; border-radius: 4px; }
+        .status-pending { background: #ffe0e0; color: #c0392b; }
+        .status-solved { background: #e0f0f0; color: #0d4f4f; }
+        .task-text {
+            font-size: 15px; line-height: 1.7; color: #0a0a0a;
+            margin-bottom: 15px; font-family: 'Times New Roman', serif;
+        }
+        .answer-text {
+            font-size: 20px;
+            color: #0a0a0a;
+            padding: 12px 20px;
+            background: #f8f9f9;
+            border-radius: 5px;
+            display: inline-block;
+            font-weight: 400;
+            border: 1px solid #e0e0e0;
+            margin-bottom: 15px;
+            font-family: 'Times New Roman', serif;
+        }
+        .btn-solved {
+            background: white; color: #0a0a0a; border: 1px solid #0d4f4f;
+            padding: 9px 20px; border-radius: 5px; cursor: pointer;
+            font-size: 14px; width: 100%;
+        }
+        .btn-solved:hover { background: #0d4f4f; color: white; }
+        .btn-solved.marked { background: #0d4f4f; color: white; }
+        .frac {
+            display: inline-block;
+            vertical-align: middle;
+            text-align: center;
+            margin: 0 2px;
+            font-size: 0.9em;
+        }
+        .frac .num {
+            display: block;
+            border-bottom: 1px solid #0a0a0a;
+            padding: 0 2px;
+            line-height: 1.1;
+        }
+        .frac .den {
+            display: block;
+            padding: 0 2px;
+            line-height: 1.1;
+        }
+        @media (min-width: 768px) {
+            .header { padding: 15px 25px; }
+            .header h1 { font-size: 18px; }            .controls { padding: 12px 25px; }
+            .tasks-container { padding: 25px; }
+            .task-block { padding: 25px 30px; }
+            .task-text { font-size: 16px; }
+            .btn-solved { width: auto; }
+        }
+        @media (max-width: 480px) {
+            .header { padding: 10px 12px; }
+            .header h1 { font-size: 14px; }
+            .controls { padding: 8px 12px; }
+            .tasks-container { padding: 12px; }
+            .task-block { padding: 15px; }
+            .task-text { font-size: 14px; }
+            .answer-text { font-size: 18px; padding: 10px 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header"><h1>ЗАДАНИЕ 15</h1></div>
+    <div class="controls">
+        <div class="unsolved-counter" id="unsolvedCounter">Не решено: 0</div>
+        <button class="sort-btn" onclick="toggleSort()"><span id="sortArrow">↓</span> <span id="sortText">Сортировка</span></button>
+    </div>
+    <div class="tasks-container" id="tasksContainer"></div>
+
+    <script>
+        var tasks = [
+            { id: 1, text: '1) 13/(3<sup>x</sup> − 81) ≤ 1/(3<sup>x</sup> − 9)', answer: '(−∞; 1] ∪ (2; 4)' },
+            { id: 2, text: '2) 6/(5<sup>x</sup> − 25) ≤ 1/(5<sup>x</sup> − 5)', answer: '(−∞; 0] ∪ (1; 2)' },
+            { id: 3, text: '3) 2/(3<sup>x</sup> + 27) ≥ 1/(3<sup>x</sup> − 27)', answer: '(−∞; 3) ∪ [4; +∞)' },
+            { id: 4, text: '4) 4/(2<sup>x</sup> + 32) ≥ 1/(2<sup>x</sup> − 16)', answer: '(−∞; 4) ∪ [5; +∞)' },
+            { id: 5, text: '5) 1/(3<sup>x</sup> + 21) + 1/(3<sup>x</sup> − 27) ≥ 0', answer: '(−∞; 1] ∪ (3; +∞)' },
+            { id: 6, text: '6) 1/(7<sup>x</sup> + 35) + 1/(7<sup>x</sup> − 49) ≥ 0', answer: '(−∞; 1] ∪ (2; +∞)' },
+            { id: 7, text: '7) 3<sup>x</sup> + 243/(3<sup>x</sup> − 84) ≤ 0', answer: '(−∞; 1] ∪ [4; log<sub>3</sub> 84)' },
+            { id: 8, text: '8) 6<sup>x</sup> + 216/(6<sup>x</sup> − 42) ≤ 0', answer: '(−∞; 1] ∪ [2; log<sub>6</sub> 42)' },
+            { id: 9, text: '9) (8<sup>x+1</sup> − 40)/(2·64<sup>x</sup> − 32) ≤ 1', answer: '{1/3} ∪ (2/3; ∞)' },
+            { id: 10, text: '10) (4<sup>x+1</sup> − 10)/(2·16<sup>x</sup> − 8) ≤ 1', answer: '{0} ∪ (1/2; ∞)' },
+            { id: 11, text: '1) 2/(7<sup>x</sup> − 7) ≥ 5/(7<sup>x</sup> − 4)', answer: '(−∞; log<sub>7</sub> 4) ∪ (1; log<sub>7</sub> 9]' },
+            { id: 12, text: '2) 4/(3<sup>x</sup> − 3) ≥ 5/(3<sup>x</sup> − 2)', answer: '(−∞; log<sub>3</sub> 2) ∪ (1; log<sub>3</sub> 7]' },
+            { id: 13, text: '3) 1/(5<sup>x</sup> + 31) ≤ 4/(5<sup>x+1</sup> − 1)', answer: '(−1; 3]' },
+            { id: 14, text: '4) 1/(2<sup>x</sup> + 21) ≤ 3/(2<sup>x+2</sup> − 1)', answer: '(−2; 6]' },
+            { id: 15, text: '5) (3<sup>x</sup> − 1)/(3<sup>x</sup> − 3) ≤ 1 + 1/(3<sup>x</sup> − 2)', answer: '(−∞; 0] ∪ (log<sub>3</sub> 2; 1)' },
+            { id: 16, text: '6) (6<sup>x</sup> − 1)/(6<sup>x</sup> − 6) ≤ 1 + 3/(6<sup>x</sup> − 4)', answer: '(−∞; 0] ∪ (log<sub>6</sub> 4; 1)' },
+            { id: 17, text: '7) (4<sup>x</sup> − 2)/(4<sup>x</sup> − 3) ≤ 1 − 1/(4<sup>x</sup> − 4)', answer: '(−∞; log<sub>4</sub> 3) ∪ (log<sub>4</sub> 3.5; 1)' },
+            { id: 18, text: '8) (5<sup>x</sup> − 4)/(5<sup>x</sup> − 3) ≤ 1 − 3/(5<sup>x</sup> − 5)', answer: '(−∞; log<sub>5</sub> 2] ∪ (log<sub>5</sub> 3; 1)' },
+            { id: 19, text: '1) (15<sup>x</sup> − 3<sup>x+1</sup> − 5<sup>x+1</sup> + 15)/(−x<sup>2</sup> + 2x) ≥ 0', answer: '(0; log<sub>5</sub> 3] ∪ [log<sub>3</sub> 5; 2)' },
+            { id: 20, text: '2) (14<sup>x</sup> − 7<sup>x+1</sup> − 2<sup>x+1</sup> + 14)/(−x<sup>2</sup> + 4x) ≥ 0', answer: '(0; log<sub>7</sub> 2] ∪ [log<sub>2</sub> 7; 4)' },
+            { id: 21, text: '1) (10<sup>x</sup> − 25·2<sup>x</sup> − 2·5<sup>x</sup> + 50)/(5x − x<sup>2</sup> − 4) ≥ 0', answer: '[2; 4)' },
+            { id: 22, text: '2) (12<sup>x</sup> − 16·3<sup>x</sup> − 3·4<sup>x</sup> + 48)/(6x − x<sup>2</sup> − 5) ≥ 0', answer: '[2; 5)' },
+            { id: 23, text: '3) (27<sup>x</sup> − 9<sup>x+1</sup> + 3<sup>x+3</sup> − 27)/(50x<sup>2</sup> − 110x + 60,5) ≥ 0', answer: '[1; 1.1) ∪ (1.1; +∞)' },            { id: 24, text: '4) (27<sup>x+1</sup> − 3·9<sup>x+1</sup> + 3<sup>x+2</sup> − 1)/(50x<sup>2</sup> + 50x + 12,5) ≥ 0', answer: '[−1; −0.5) ∪ (−0.5; +∞)' },
+            { id: 25, text: '1) (6<sup>x</sup> − 4·3<sup>x</sup>)/(x·2<sup>x</sup> − 5·2<sup>x</sup> − 4x + 20) ≤ 1/(x − 5)', answer: '[0; 2) ∪ (2; 5)' },
+            { id: 26, text: '2) (15<sup>x</sup> − 9·5<sup>x</sup>)/(x·3<sup>x</sup> − 4·3<sup>x</sup> − 9x + 36) ≤ 1/(x − 4)', answer: '[0; 2) ∪ (2; 4)' },
+            { id: 27, text: '1) (13 − 5·3<sup>x</sup>)/(9<sup>x</sup> − 12·3<sup>x</sup> + 27) ≥ 0,5', answer: '{0} ∪ (1; 2)' },
+            { id: 28, text: '2) (31 − 7·5<sup>x</sup>)/(25<sup>x</sup> − 30·5<sup>x</sup> + 125) ≥ 0,25', answer: '{0} ∪ (1; 2)' },
+            { id: 29, text: '3) (7 − 2·2<sup>x</sup>)/(4<sup>x</sup> − 12·2<sup>x</sup> + 32) ≥ 0,25', answer: '{1} ∪ (2; 3)' },
+            { id: 30, text: '4) (31 − 5·2<sup>x</sup>)/(4<sup>x</sup> − 24·2<sup>x</sup> + 128) ≥ 0,25', answer: '{1} ∪ (3; 4)' },
+            { id: 31, text: '1) (6<sup>x</sup> − 4·3<sup>x</sup>)/(x·2<sup>x</sup> − 5·2<sup>x</sup> − 4x + 20) ≤ 1/(x − 5)', answer: '(1; log<sub>6</sub> 7)' },
+            { id: 32, text: '2) (15<sup>x</sup> − 9·5<sup>x</sup>)/(x·3<sup>x</sup> − 4·3<sup>x</sup> − 9x + 36) ≤ 1/(x − 4)', answer: '(log<sub>5</sub> 4; 1)' },
+            { id: 33, text: '3) (27<sup>x</sup> − 9<sup>x+1</sup> + 3<sup>x+3</sup> − 27)/(50x<sup>2</sup> − 110x + 60,5) ≥ 0', answer: '(1; log<sub>2</sub> 3)' },
+            { id: 34, text: '4) (27<sup>x+1</sup> − 3·9<sup>x+1</sup> + 3<sup>x+2</sup> − 1)/(50x<sup>2</sup> + 50x + 12,5) ≥ 0', answer: '(log<sub>3</sub> 2; 1)' },
+            { id: 35, text: '5) (6<sup>x</sup> − 4·3<sup>x</sup>)/(x·2<sup>x</sup> − 5·2<sup>x</sup> − 4x + 20) ≤ 1/(x − 5)', answer: '[2; 3]' },
+            { id: 36, text: '6) (15<sup>x</sup> − 9·5<sup>x</sup>)/(x·3<sup>x</sup> − 4·3<sup>x</sup> − 9x + 36) ≤ 1/(x − 4)', answer: '(−∞; 1] ∪ [log<sub>7</sub> 9; 2]' },
+            { id: 37, text: '7) (27<sup>x</sup> − 9<sup>x+1</sup> + 3<sup>x+3</sup> − 27)/(50x<sup>2</sup> − 110x + 60,5) ≥ 0', answer: '(−∞; log<sub>5</sub> 9] ∪ {2}' },
+            { id: 38, text: '8) (27<sup>x+1</sup> − 3·9<sup>x+1</sup> + 3<sup>x+2</sup> − 1)/(50x<sup>2</sup> + 50x + 12,5) ≥ 0', answer: '(−∞; log<sub>7</sub> 8] ∪ {3}' },
+            { id: 39, text: '9) (6<sup>x</sup> − 4·3<sup>x</sup>)/(x·2<sup>x</sup> − 5·2<sup>x</sup> − 4x + 20) ≤ 1/(x − 5)', answer: '(−∞; −2] ∪ [−1; 0]' },
+            { id: 40, text: '10) (15<sup>x</sup> − 9·5<sup>x</sup>)/(x·3<sup>x</sup> − 4·3<sup>x</sup> − 9x + 36) ≤ 1/(x − 4)', answer: '(−∞; log<sub>5</sub> 4] ∪ [1; 2]' },
+            { id: 41, text: '11) (27<sup>x</sup> − 9<sup>x+1</sup> + 3<sup>x+3</sup> − 27)/(50x<sup>2</sup> − 110x + 60,5) ≥ 0', answer: '[1; 2] ∪ (log<sub>2</sub> 5; 3)' },
+            { id: 42, text: '12) (27<sup>x+1</sup> − 3·9<sup>x+1</sup> + 3<sup>x+2</sup> − 1)/(50x<sup>2</sup> + 50x + 12,5) ≥ 0', answer: '[0; log<sub>7</sub> 3] ∪ (log<sub>7</sub> 5; 1)' },
+            { id: 43, text: '13) (6<sup>x</sup> − 4·3<sup>x</sup>)/(x·2<sup>x</sup> − 5·2<sup>x</sup> − 4x + 20) ≤ 1/(x − 5)', answer: '[0; log<sub>2</sub> 3) ∪ [2; log<sub>2</sub> 5]' },
+            { id: 44, text: '14) (15<sup>x</sup> − 9·5<sup>x</sup>)/(x·3<sup>x</sup> − 4·3<sup>x</sup> − 9x + 36) ≤ 1/(x − 4)', answer: '[log<sub>3</sub> 2; log<sub>3</sub> 5) ∪ {2}' },
+            { id: 45, text: '15) (27<sup>x</sup> − 9<sup>x+1</sup> + 3<sup>x+3</sup> − 27)/(50x<sup>2</sup> − 110x + 60,5) ≥ 0', answer: '{1} ∪ (2; ∞)' },
+            { id: 46, text: '16) (27<sup>x+1</sup> − 3·9<sup>x+1</sup> + 3<sup>x+2</sup> − 1)/(50x<sup>2</sup> + 50x + 12,5) ≥ 0', answer: '{2} ∪ (3; ∞)' },
+            { id: 47, text: '17) (6<sup>x</sup> − 4·3<sup>x</sup>)/(x·2<sup>x</sup> − 5·2<sup>x</sup> − 4x + 20) ≤ 1/(x − 5)', answer: '(−∞; 0) ∪ {1/3} ∪ (2/3; ∞)' },
+            { id: 48, text: '18) (15<sup>x</sup> − 9·5<sup>x</sup>)/(x·3<sup>x</sup> − 4·3<sup>x</sup> − 9x + 36) ≤ 1/(x − 4)', answer: '(−∞; 0) ∪ {1/2} ∪ (1; ∞)' },
+            { id: 49, text: '19) (27<sup>x</sup> − 9<sup>x+1</sup> + 3<sup>x+3</sup> − 27)/(50x<sup>2</sup> − 110x + 60,5) ≥ 0', answer: '(−∞; 0) ∪ (0; 2) ∪ [log<sub>2</sub> 5; log<sub>2</sub> 6) ∪ (log<sub>2</sub> 6; ∞)' },
+            { id: 50, text: '20) (27<sup>x+1</sup> − 3·9<sup>x+1</sup> + 3<sup>x+2</sup> − 1)/(50x<sup>2</sup> + 50x + 12,5) ≥ 0', answer: '(0; 1) ∪ [1; log<sub>3</sub> 6] ∪ [log<sub>3</sub> 7; ∞)' },
+            { id: 51, text: '21) (6<sup>x</sup> − 4·3<sup>x</sup>)/(x·2<sup>x</sup> − 5·2<sup>x</sup> − 4x + 20) ≤ 1/(x − 5)', answer: '(−∞; 0) ∪ [log<sub>3</sub> 2; 1]' },
+            { id: 52, text: '22) (15<sup>x</sup> − 9·5<sup>x</sup>)/(x·3<sup>x</sup> − 4·3<sup>x</sup> − 9x + 36) ≤ 1/(x − 4)', answer: '(−∞; 0) ∪ [1; 2]' },
+            { id: 53, text: '23) (27<sup>x</sup> − 9<sup>x+1</sup> + 3<sup>x+3</sup> − 27)/(50x<sup>2</sup> − 110x + 60,5) ≥ 0', answer: '[log<sub>5</sub> 2; log<sub>5</sub> 13]' },
+            { id: 54, text: '24) (27<sup>x+1</sup> − 3·9<sup>x+1</sup> + 3<sup>x+2</sup> − 1)/(50x<sup>2</sup> + 50x + 12,5) ≥ 0', answer: '[log<sub>2</sub> 3; log<sub>2</sub> 6]' },
+            { id: 55, text: '25) (6<sup>x</sup> − 4·3<sup>x</sup>)/(x·2<sup>x</sup> − 5·2<sup>x</sup> − 4x + 20) ≤ 1/(x − 5)', answer: '[0; log<sub>5</sub> 2]' },
+            { id: 56, text: '26) (15<sup>x</sup> − 9·5<sup>x</sup>)/(x·3<sup>x</sup> − 4·3<sup>x</sup> − 9x + 36) ≤ 1/(x − 4)', answer: '[1; 2]' },
+            { id: 57, text: '27) (27<sup>x</sup> − 9<sup>x+1</sup> + 3<sup>x+3</sup> − 27)/(50x<sup>2</sup> − 110x + 60,5) ≥ 0', answer: '[1; log<sub>2</sub> 3) ∪ (2; log<sub>2</sub> 5]' },
+            { id: 58, text: '28) (27<sup>x+1</sup> − 3·9<sup>x+1</sup> + 3<sup>x+2</sup> − 1)/(50x<sup>2</sup> + 50x + 12,5) ≥ 0', answer: '(−∞; log<sub>5</sub> 2) ∪ (log<sub>5</sub> 2; 1) ∪ (1; log<sub>5</sub> 8]' },
+            { id: 59, text: '29) (6<sup>x</sup> − 4·3<sup>x</sup>)/(x·2<sup>x</sup> − 5·2<sup>x</sup> − 4x + 20) ≤ 1/(x − 5)', answer: '(−∞; log<sub>11</sub> 5]' },
+            { id: 60, text: '30) (15<sup>x</sup> − 9·5<sup>x</sup>)/(x·3<sup>x</sup> − 4·3<sup>x</sup> − 9x + 36) ≤ 1/(x − 4)', answer: '(log<sub>3</sub> 2; 1] ∪ [log<sub>3</sub> 4; log<sub>3</sub> 5]' },
+            { id: 61, text: '31) (27<sup>x</sup> − 9<sup>x+1</sup> + 3<sup>x+3</sup> − 27)/(50x<sup>2</sup> − 110x + 60,5) ≥ 0', answer: '(−1; 0] ∪ (2; log<sub>2</sub> 6.5]' },
+            { id: 62, text: '32) (27<sup>x+1</sup> − 3·9<sup>x+1</sup> + 3<sup>x+2</sup> − 1)/(50x<sup>2</sup> + 50x + 12,5) ≥ 0', answer: '(−1; 0] ∪ [log<sub>3</sub> (5/3); 1)' },
+            { id: 63, text: '33) (6<sup>x</sup> − 4·3<sup>x</sup>)/(x·2<sup>x</sup> − 5·2<sup>x</sup> − 4x + 20) ≤ 1/(x − 5)', answer: '(−∞; −√2) ∪ [−1; 0) ∪ (0; 1] ∪ (√2; ∞)' },
+            { id: 64, text: '34) (15<sup>x</sup> − 9·5<sup>x</sup>)/(x·3<sup>x</sup> − 4·3<sup>x</sup> − 9x + 36) ≤ 1/(x − 4)', answer: '(−∞; −√2) ∪ [−1; 0) ∪ (0; 1] ∪ (√2; ∞)' },
+            { id: 65, text: '35) (27<sup>x</sup> − 9<sup>x+1</sup> + 3<sup>x+3</sup> − 27)/(50x<sup>2</sup> − 110x + 60,5) ≥ 0', answer: '(−∞; −√2) ∪ [−√1.5; 0) ∪ (0; √1.5] ∪ (√2; ∞)' },
+            { id: 66, text: '36) (27<sup>x+1</sup> − 3·9<sup>x+1</sup> + 3<sup>x+2</sup> − 1)/(50x<sup>2</sup> + 50x + 12,5) ≥ 0', answer: '(−∞; −2) ∪ [−1; 0) ∪ (0; 1] ∪ (2; ∞)' },
+            { id: 67, text: '37) (6<sup>x</sup> − 4·3<sup>x</sup>)/(x·2<sup>x</sup> − 5·2<sup>x</sup> − 4x + 20) ≤ 1/(x − 5)', answer: '(−∞; −√41] ∪ [−5; −3) ∪ (3; 5] ∪ [√41; ∞)' },
+            { id: 68, text: '38) (15<sup>x</sup> − 9·5<sup>x</sup>)/(x·3<sup>x</sup> − 4·3<sup>x</sup> − 9x + 36) ≤ 1/(x − 4)', answer: '(−∞; −√43] ∪ [−5; −4) ∪ (4; 5] ∪ [√43; ∞)' },
+            { id: 69, text: '39) (27<sup>x</sup> − 9<sup>x+1</sup> + 3<sup>x+3</sup> − 27)/(50x<sup>2</sup> − 110x + 60,5) ≥ 0', answer: '(−5; −√20] ∪ {0} ∪ [√20; 5)' },
+            { id: 70, text: '40) (27<sup>x+1</sup> − 3·9<sup>x+1</sup> + 3<sup>x+2</sup> − 1)/(50x<sup>2</sup> + 50x + 12,5) ≥ 0', answer: '(−9; −√54] ∪ {0} ∪ [√54; 9)' },
+            { id: 71, text: '41) (6<sup>x</sup> − 4·3<sup>x</sup>)/(x·2<sup>x</sup> − 5·2<sup>x</sup> − 4x + 20) ≤ 1/(x − 5)', answer: '(−8; −√48] ∪ {0} ∪ [√48; 8)' },
+            { id: 72, text: '42) (15<sup>x</sup> − 9·5<sup>x</sup>)/(x·3<sup>x</sup> − 4·3<sup>x</sup> − 9x + 36) ≤ 1/(x − 4)', answer: '(−7; −√42] ∪ {0} ∪ [√42; 7)' },
+            { id: 73, text: '43) (27<sup>x</sup> − 9<sup>x+1</sup> + 3<sup>x+3</sup> − 27)/(50x<sup>2</sup> − 110x + 60,5) ≥ 0', answer: '(1/8; 1/2) ∪ (8; 32)' },            { id: 74, text: '44) (27<sup>x+1</sup> − 3·9<sup>x+1</sup> + 3<sup>x+2</sup> − 1)/(50x<sup>2</sup> + 50x + 12,5) ≥ 0', answer: '(1/4; 1/2) ∪ (8; 16)' },
+            { id: 75, text: '45) (6<sup>x</sup> − 4·3<sup>x</sup>)/(x·2<sup>x</sup> − 5·2<sup>x</sup> − 4x + 20) ≤ 1/(x − 5)', answer: '[1; 2)' },
+            { id: 76, text: '46) (15<sup>x</sup> − 9·5<sup>x</sup>)/(x·3<sup>x</sup> − 4·3<sup>x</sup> − 9x + 36) ≤ 1/(x − 4)', answer: '[2; 3)' },
+            { id: 77, text: '47) (27<sup>x</sup> − 9<sup>x+1</sup> + 3<sup>x+3</sup> − 27)/(50x<sup>2</sup> − 110x + 60,5) ≥ 0', answer: '[−2; −1) ∪ (0; 9]' },
+            { id: 78, text: '48) (27<sup>x+1</sup> − 3·9<sup>x+1</sup> + 3<sup>x+2</sup> − 1)/(50x<sup>2</sup> + 50x + 12,5) ≥ 0', answer: '[−2; −0.5) ∪ (0; 10]' },
+            { id: 79, text: '49) (6<sup>x</sup> − 4·3<sup>x</sup>)/(x·2<sup>x</sup> − 5·2<sup>x</sup> − 4x + 20) ≤ 1/(x − 5)', answer: '(0.5; 4/3] ∪ [3; ∞)' },
+            { id: 80, text: '50) (15<sup>x</sup> − 9·5<sup>x</sup>)/(x·3<sup>x</sup> − 4·3<sup>x</sup> − 9x + 36) ≤ 1/(x − 4)', answer: '(1; 1.5] ∪ [4; ∞)' },
+            { id: 81, text: '51) (27<sup>x</sup> − 9<sup>x+1</sup> + 3<sup>x+3</sup> − 27)/(50x<sup>2</sup> − 110x + 60,5) ≥ 0', answer: '[−1/6; −1/24) ∪ (0; ∞)' },
+            { id: 82, text: '52) (27<sup>x+1</sup> − 3·9<sup>x+1</sup> + 3<sup>x+2</sup> − 1)/(50x<sup>2</sup> + 50x + 12,5) ≥ 0', answer: '[−1/4; −1/16) ∪ (0; ∞)' },
+            { id: 83, text: '53) (6<sup>x</sup> − 4·3<sup>x</sup>)/(x·2<sup>x</sup> − 5·2<sup>x</sup> − 4x + 20) ≤ 1/(x − 5)', answer: '[−1/2; −1/4) ∪ (0; ∞)' },
+            { id: 84, text: '54) (15<sup>x</sup> − 9·5<sup>x</sup>)/(x·3<sup>x</sup> − 4·3<sup>x</sup> − 9x + 36) ≤ 1/(x − 4)', answer: '[−1/4; −1/32) ∪ (0; ∞)' },
+            { id: 85, text: '55) (27<sup>x</sup> − 9<sup>x+1</sup> + 3<sup>x+3</sup> − 27)/(50x<sup>2</sup> − 110x + 60,5) ≥ 0', answer: '(1/2; 1] ∪ [10; ∞)' },
+            { id: 86, text: '56) (27<sup>x+1</sup> − 3·9<sup>x+1</sup> + 3<sup>x+2</sup> − 1)/(50x<sup>2</sup> + 50x + 12,5) ≥ 0', answer: '(3/2; 2] ∪ [7; ∞)' },
+            { id: 87, text: '57) (6<sup>x</sup> − 4·3<sup>x</sup>)/(x·2<sup>x</sup> − 5·2<sup>x</sup> − 4x + 20) ≤ 1/(x − 5)', answer: '(−∞; −12] ∪ (−35/8; 0]' },
+            { id: 88, text: '58) (15<sup>x</sup> − 9·5<sup>x</sup>)/(x·3<sup>x</sup> − 4·3<sup>x</sup> − 9x + 36) ≤ 1/(x − 4)', answer: '(−∞; −27] ∪ (−80/11; 0]' },
+            { id: 89, text: '59) (27<sup>x</sup> − 9<sup>x+1</sup> + 3<sup>x+3</sup> − 27)/(50x<sup>2</sup> − 110x + 60,5) ≥ 0', answer: '(0; 1/√5] ∪ [1/2; 1)' },
+            { id: 90, text: '60) (27<sup>x+1</sup> − 3·9<sup>x+1</sup> + 3<sup>x+2</sup> − 1)/(50x<sup>2</sup> + 50x + 12,5) ≥ 0', answer: '[(5√2 − 2)/10; 1)' },
+            { id: 91, text: '61) (6<sup>x</sup> − 4·3<sup>x</sup>)/(x·2<sup>x</sup> − 5·2<sup>x</sup> − 4x + 20) ≤ 1/(x − 5)', answer: '(−1; −1/√2) ∪ (−1/√2; 1/2]' },
+            { id: 92, text: '62) (15<sup>x</sup> − 9·5<sup>x</sup>)/(x·3<sup>x</sup> − 4·3<sup>x</sup> − 9x + 36) ≤ 1/(x − 4)', answer: '(−2; −1/√3) ∪ (−1/√3; 1/2]' },
+            { id: 93, text: '63) (27<sup>x</sup> − 9<sup>x+1</sup> + 3<sup>x+3</sup> − 27)/(50x<sup>2</sup> − 110x + 60,5) ≥ 0', answer: '[−8; −1) ∪ (4; 16]' },
+            { id: 94, text: '64) (27<sup>x+1</sup> − 3·9<sup>x+1</sup> + 3<sup>x+2</sup> − 1)/(50x<sup>2</sup> + 50x + 12,5) ≥ 0', answer: '[−7; −5) ∪ (4; 15]' },
+            { id: 95, text: '65) (6<sup>x</sup> − 4·3<sup>x</sup>)/(x·2<sup>x</sup> − 5·2<sup>x</sup> − 4x + 20) ≤ 1/(x − 5)', answer: '[−13; −7)' },
+            { id: 96, text: '66) (15<sup>x</sup> − 9·5<sup>x</sup>)/(x·3<sup>x</sup> − 4·3<sup>x</sup> − 9x + 36) ≤ 1/(x − 4)', answer: '[−6; 6) ∪ (7; 18]' },
+            { id: 97, text: '67) (27<sup>x</sup> − 9<sup>x+1</sup> + 3<sup>x+3</sup> − 27)/(50x<sup>2</sup> − 110x + 60,5) ≥ 0', answer: '[−5; −4) ∪ (0; 1) ∪ (1; ∞)' },
+            { id: 98, text: '68) (27<sup>x+1</sup> − 3·9<sup>x+1</sup> + 3<sup>x+2</sup> − 1)/(50x<sup>2</sup> + 50x + 12,5) ≥ 0', answer: '(−1; 0) ∪ (5; 6]' },
+            { id: 99, text: '69) (6<sup>x</sup> − 4·3<sup>x</sup>)/(x·2<sup>x</sup> − 5·2<sup>x</sup> − 4x + 20) ≤ 1/(x − 5)', answer: '(−2; 0) ∪ (2; 4)' },
+            { id: 100, text: '70) (15<sup>x</sup> − 9·5<sup>x</sup>)/(x·3<sup>x</sup> − 4·3<sup>x</sup> − 9x + 36) ≤ 1/(x − 4)', answer: '(−2; 0) ∪ (6; 8)' },
+            { id: 101, text: '71) (27<sup>x</sup> − 9<sup>x+1</sup> + 3<sup>x+3</sup> − 27)/(50x<sup>2</sup> − 110x + 60,5) ≥ 0', answer: '(−1; 0) ∪ (3; 4)' },
+            { id: 102, text: '72) (27<sup>x+1</sup> − 3·9<sup>x+1</sup> + 3<sup>x+2</sup> − 1)/(50x<sup>2</sup> + 50x + 12,5) ≥ 0', answer: '(−1; 0) ∪ (4; 5)' },
+            { id: 103, text: '73) (6<sup>x</sup> − 4·3<sup>x</sup>)/(x·2<sup>x</sup> − 5·2<sup>x</sup> − 4x + 20) ≤ 1/(x − 5)', answer: '(−2; −1] ∪ {1}' },
+            { id: 104, text: '74) (15<sup>x</sup> − 9·5<sup>x</sup>)/(x·3<sup>x</sup> − 4·3<sup>x</sup> − 9x + 36) ≤ 1/(x − 4)', answer: '(−1; 0] ∪ {3}' },
+            { id: 105, text: '75) (27<sup>x</sup> − 9<sup>x+1</sup> + 3<sup>x+3</sup> − 27)/(50x<sup>2</sup> − 110x + 60,5) ≥ 0', answer: '[1; 3) ∪ (3; 6]' },
+            { id: 106, text: '76) (27<sup>x+1</sup> − 3·9<sup>x+1</sup> + 3<sup>x+2</sup> − 1)/(50x<sup>2</sup> + 50x + 12,5) ≥ 0', answer: '[(11 − √41)/2; 5) ∪ (5; (11 + √41)/2]' },
+            { id: 107, text: '77) (6<sup>x</sup> − 4·3<sup>x</sup>)/(x·2<sup>x</sup> − 5·2<sup>x</sup> − 4x + 20) ≤ 1/(x − 5)', answer: '[(5 − √17)/2; 2) ∪ (2; (5 + √17)/2]' },
+            { id: 108, text: '78) (15<sup>x</sup> − 9·5<sup>x</sup>)/(x·3<sup>x</sup> − 4·3<sup>x</sup> − 9x + 36) ≤ 1/(x − 4)', answer: '[(9 − √33)/2; 4) ∪ (4; (9 + √33)/2]' },
+            { id: 109, text: '79) (27<sup>x</sup> − 9<sup>x+1</sup> + 3<sup>x+3</sup> − 27)/(50x<sup>2</sup> − 110x + 60,5) ≥ 0', answer: '(1; 31]' },
+            { id: 110, text: '80) (27<sup>x+1</sup> − 3·9<sup>x+1</sup> + 3<sup>x+2</sup> − 1)/(50x<sup>2</sup> + 50x + 12,5) ≥ 0', answer: '(3; 78]' },
+            { id: 111, text: '81) (6<sup>x</sup> − 4·3<sup>x</sup>)/(x·2<sup>x</sup> − 5·2<sup>x</sup> − 4x + 20) ≤ 1/(x − 5)', answer: '[−11/4; 5) ∪ (5; ∞)' },
+            { id: 112, text: '82) (15<sup>x</sup> − 9·5<sup>x</sup>)/(x·3<sup>x</sup> − 4·3<sup>x</sup> − 9x + 36) ≤ 1/(x − 4)', answer: '[−699/100; 2) ∪ (2; ∞)' },
+            { id: 113, text: '83) (27<sup>x</sup> − 9<sup>x+1</sup> + 3<sup>x+3</sup> − 27)/(50x<sup>2</sup> − 110x + 60,5) ≥ 0', answer: '(−7; −6] ∪ [−3√2; 3√2]' },
+            { id: 114, text: '84) (27<sup>x+1</sup> − 3·9<sup>x+1</sup> + 3<sup>x+2</sup> − 1)/(50x<sup>2</sup> + 50x + 12,5) ≥ 0', answer: '(−3; −√6] ∪ [−2; √6]' },
+            { id: 115, text: '85) (6<sup>x</sup> − 4·3<sup>x</sup>)/(x·2<sup>x</sup> − 5·2<sup>x</sup> − 4x + 20) ≤ 1/(x − 5)', answer: '[−2√2; 2√2] ∪ [5; 6)' },
+            { id: 116, text: '86) (15<sup>x</sup> − 9·5<sup>x</sup>)/(x·3<sup>x</sup> − 4·3<sup>x</sup> − 9x + 36) ≤ 1/(x − 4)', answer: '(−∞; −3√2] ∪ [3; 4)' },
+            { id: 117, text: '87) (27<sup>x</sup> − 9<sup>x+1</sup> + 3<sup>x+3</sup> − 27)/(50x<sup>2</sup> − 110x + 60,5) ≥ 0', answer: '(−∞; −3] ∪ [−2√2; −2)' },
+            { id: 118, text: '88) (27<sup>x+1</sup> − 3·9<sup>x+1</sup> + 3<sup>x+2</sup> − 1)/(50x<sup>2</sup> + 50x + 12,5) ≥ 0', answer: '(−∞; −2√2] ∪ [−2; −1)' },
+            { id: 119, text: '89) (6<sup>x</sup> − 4·3<sup>x</sup>)/(x·2<sup>x</sup> − 5·2<sup>x</sup> − 4x + 20) ≤ 1/(x − 5)', answer: '[4^((1−3√3)/4); 1) ∪ (1; 4^((1+3√3)/4)]' },
+            { id: 120, text: '90) (15<sup>x</sup> − 9·5<sup>x</sup>)/(x·3<sup>x</sup> − 4·3<sup>x</sup> − 9x + 36) ≤ 1/(x − 4)', answer: '[1/2; 1) ∪ (1; 2^(37/35)]' },
+            { id: 121, text: '91) (27<sup>x</sup> − 9<sup>x+1</sup> + 3<sup>x+3</sup> − 27)/(50x<sup>2</sup> − 110x + 60,5) ≥ 0', answer: '(0; 1/81) ∪ (1; ∞)' },
+            { id: 122, text: '92) (27<sup>x+1</sup> − 3·9<sup>x+1</sup> + 3<sup>x+2</sup> − 1)/(50x<sup>2</sup> + 50x + 12,5) ≥ 0', answer: '(0; 1/49) ∪ (1; ∞)' },
+            { id: 123, text: '93) (6<sup>x</sup> − 4·3<sup>x</sup>)/(x·2<sup>x</sup> − 5·2<sup>x</sup> − 4x + 20) ≤ 1/(x − 5)', answer: '(0; 1/64) ∪ {4} ∪ (64; ∞)' },            { id: 124, text: '94) (15<sup>x</sup> − 9·5<sup>x</sup>)/(x·3<sup>x</sup> − 4·3<sup>x</sup> − 9x + 36) ≤ 1/(x − 4)', answer: '(0; 1/32) ∪ {16} ∪ (32; ∞)' },
+            { id: 125, text: '95) (27<sup>x</sup> − 9<sup>x+1</sup> + 3<sup>x+3</sup> − 27)/(50x<sup>2</sup> − 110x + 60,5) ≥ 0', answer: '(0; 1/25) ∪ {1/5} ∪ (25; ∞)' },
+            { id: 126, text: '96) (27<sup>x+1</sup> − 3·9<sup>x+1</sup> + 3<sup>x+2</sup> − 1)/(50x<sup>2</sup> + 50x + 12,5) ≥ 0', answer: '(0; 1/81) ∪ {1/9} ∪ (81; ∞)' },
+            { id: 127, text: '97) (6<sup>x</sup> − 4·3<sup>x</sup>)/(x·2<sup>x</sup> − 5·2<sup>x</sup> − 4x + 20) ≤ 1/(x − 5)', answer: '(0; 1) ∪ {8} ∪ (64; ∞)' },
+            { id: 128, text: '98) (15<sup>x</sup> − 9·5<sup>x</sup>)/(x·3<sup>x</sup> − 4·3<sup>x</sup> − 9x + 36) ≤ 1/(x − 4)', answer: '(0; 1) ∪ {3} ∪ (27; ∞)' },
+            { id: 129, text: '99) (27<sup>x</sup> − 9<sup>x+1</sup> + 3<sup>x+3</sup> − 27)/(50x<sup>2</sup> − 110x + 60,5) ≥ 0', answer: '(0; 1] ∪ [4; 64) ∪ (64; ∞)' },
+            { id: 130, text: '100) (27<sup>x+1</sup> − 3·9<sup>x+1</sup> + 3<sup>x+2</sup> − 1)/(50x<sup>2</sup> + 50x + 12,5) ≥ 0', answer: '(0; 1/8] ∪ [8; 32) ∪ (32; ∞)' },
+            { id: 131, text: '101) (6<sup>x</sup> − 4·3<sup>x</sup>)/(x·2<sup>x</sup> − 5·2<sup>x</sup> − 4x + 20) ≤ 1/(x − 5)', answer: '(1/2; 2/3] ∪ (1; ∞)' },
+            { id: 132, text: '102) (15<sup>x</sup> − 9·5<sup>x</sup>)/(x·3<sup>x</sup> − 4·3<sup>x</sup> − 9x + 36) ≤ 1/(x − 4)', answer: '(9/5; 20/11] ∪ (2; ∞)' },
+            { id: 133, text: '103) (27<sup>x</sup> − 9<sup>x+1</sup> + 3<sup>x+3</sup> − 27)/(50x<sup>2</sup> − 110x + 60,5) ≥ 0', answer: '[−10/3; ∞)' },
+            { id: 134, text: '104) (27<sup>x+1</sup> − 3·9<sup>x+1</sup> + 3<sup>x+2</sup> − 1)/(50x<sup>2</sup> + 50x + 12,5) ≥ 0', answer: '[−9/4; ∞)' },
+            { id: 135, text: '105) (6<sup>x</sup> − 4·3<sup>x</sup>)/(x·2<sup>x</sup> − 5·2<sup>x</sup> − 4x + 20) ≤ 1/(x − 5)', answer: '(−4; −27/7] ∪ [−4 + 1/√7; −3)' },
+            { id: 136, text: '106) (15<sup>x</sup> − 9·5<sup>x</sup>)/(x·3<sup>x</sup> − 4·3<sup>x</sup> − 9x + 36) ≤ 1/(x − 4)', answer: '(−3; −14/5] ∪ [−3 + 1/√5; −2)' },
+            { id: 137, text: '107) (27<sup>x</sup> − 9<sup>x+1</sup> + 3<sup>x+3</sup> − 27)/(50x<sup>2</sup> − 110x + 60,5) ≥ 0', answer: '(−4; −3] ∪ [−1; ∞)' },
+            { id: 138, text: '108) (27<sup>x+1</sup> − 3·9<sup>x+1</sup> + 3<sup>x+2</sup> − 1)/(50x<sup>2</sup> + 50x + 12,5) ≥ 0', answer: '(−5; −4] ∪ [−3; ∞)' },
+            { id: 139, text: '109) (6<sup>x</sup> − 4·3<sup>x</sup>)/(x·2<sup>x</sup> − 5·2<sup>x</sup> − 4x + 20) ≤ 1/(x − 5)', answer: '(0; 1/8] ∪ (1; ∞)' },
+            { id: 140, text: '110) (15<sup>x</sup> − 9·5<sup>x</sup>)/(x·3<sup>x</sup> − 4·3<sup>x</sup> − 9x + 36) ≤ 1/(x − 4)', answer: '(0; 1/9] ∪ (1/5; ∞)' },
+            { id: 141, text: '111) (27<sup>x</sup> − 9<sup>x+1</sup> + 3<sup>x+3</sup> − 27)/(50x<sup>2</sup> − 110x + 60,5) ≥ 0', answer: '(−∞; −1] ∪ [1; 2.5) ∪ (2.5; ∞)' },
+            { id: 142, text: '112) (27<sup>x+1</sup> − 3·9<sup>x+1</sup> + 3<sup>x+2</sup> − 1)/(50x<sup>2</sup> + 50x + 12,5) ≥ 0', answer: '(−∞; −1] ∪ [1; 1.5) ∪ (1.5; ∞)' },
+            { id: 143, text: '113) (6<sup>x</sup> − 4·3<sup>x</sup>)/(x·2<sup>x</sup> − 5·2<sup>x</sup> − 4x + 20) ≤ 1/(x − 5)', answer: '(−1; −1/√2) ∪ (−1/√2; 1/2]' },
+            { id: 144, text: '114) (15<sup>x</sup> − 9·5<sup>x</sup>)/(x·3<sup>x</sup> − 4·3<sup>x</sup> − 9x + 36) ≤ 1/(x − 4)', answer: '(−2/3; −1/3) ∪ (−1/3; 1/4]' },
+            { id: 145, text: '115) (27<sup>x</sup> − 9<sup>x+1</sup> + 3<sup>x+3</sup> − 27)/(50x<sup>2</sup> − 110x + 60,5) ≥ 0', answer: '(0; 2^(−1/3)) ∪ (2^(1/3); ∞)' },
+            { id: 146, text: '116) (27<sup>x+1</sup> − 3·9<sup>x+1</sup> + 3<sup>x+2</sup> − 1)/(50x<sup>2</sup> + 50x + 12,5) ≥ 0', answer: '(0; 5^(−1/4)) ∪ (5^(1/4); ∞)' }
+        ];
+
+        var completedTasks = {};
+        var sortUnsolvedFirst = false;
+
+        function loadCompletedTasks() {
+            try {
+                var stored = localStorage.getItem('egeTask15Completed');
+                if (stored) { completedTasks = JSON.parse(stored); }
+            } catch (e) { completedTasks = {}; }
+        }
+
+        function saveCompletedTasks() {
+            try { localStorage.setItem('egeTask15Completed', JSON.stringify(completedTasks)); }
+            catch (e) {}
+        }
+
+        function getUnsolvedCount() {
+            var count = 0;
+            for (var i = 0; i < tasks.length; i++) {
+                if (!completedTasks[tasks[i].id]) { count++; }
+            }
+            return count;
+        }
+
+        function updateCounter() {
+            var counter = document.getElementById('unsolvedCounter');            var unsolved = getUnsolvedCount();
+            counter.textContent = 'Не решено: ' + unsolved + ' из ' + tasks.length;
+            if (unsolved === 0) {
+                counter.style.background = '#e0f0f0';
+                counter.style.color = '#0d4f4f';
+            } else {
+                counter.style.background = '#ffe0e0';
+                counter.style.color = '#c0392b';
+            }
+        }
+
+        function formatFractions(text) {
+            var result = text;
+            
+            // 1. Дроби вида (выражение)/(выражение) - со скобками с обеих сторон
+            result = result.replace(/\(([^)]+)\)\/\(([^)]+)\)/g, function(match, num, den) {
+                return '<span class="frac"><span class="num">(' + num + ')</span><span class="den">(' + den + ')</span></span>';
+            });
+            
+            // 2. Дроби вида число/(выражение) - например 13/(3^x - 81)
+            result = result.replace(/(\d+)\/\(([^)]+)\)/g, function(match, num, den) {
+                return '<span class="frac"><span class="num">' + num + '</span><span class="den">(' + den + ')</span></span>';
+            });
+            
+            // 3. Дроби вида (выражение)/число
+            result = result.replace(/\(([^)]+)\)\/(\d+)/g, function(match, num, den) {
+                return '<span class="frac"><span class="num">(' + num + ')</span><span class="den">' + den + '</span></span>';
+            });
+            
+            // 4. Простые дроби число/число - например 1/2, 13/81
+            result = result.replace(/(\d+)\/(\d+)/g, function(match, num, den) {
+                return '<span class="frac"><span class="num">' + num + '</span><span class="den">' + den + '</span></span>';
+            });
+            
+            return result;
+        }
+
+        function renderTasks() {
+            var container = document.getElementById('tasksContainer');
+            container.innerHTML = '';
+
+            var displayTasks = tasks.slice();
+            if (sortUnsolvedFirst) {
+                displayTasks.sort(function(a, b) {
+                    var aC = completedTasks[a.id] ? 1 : 0;
+                    var bC = completedTasks[b.id] ? 1 : 0;
+                    if (aC === bC) return a.id - b.id;
+                    return aC - bC;
+                });
+            }
+            for (var i = 0; i < displayTasks.length; i++) {
+                var task = displayTasks[i];
+                var isCompleted = completedTasks[task.id];
+
+                var block = document.createElement('div');
+                block.className = 'task-block';
+
+                var header = document.createElement('div');
+                header.className = 'task-header';
+
+                var title = document.createElement('div');
+                title.className = 'task-title';
+                title.textContent = 'Решите задание';
+
+                var status = document.createElement('div');
+                status.className = 'task-status ' + (isCompleted ? 'status-solved' : 'status-pending');
+                status.textContent = isCompleted ? 'решено' : 'не решено';
+
+                header.appendChild(title);
+                header.appendChild(status);
+                block.appendChild(header);
+
+                var text = document.createElement('div');
+                text.className = 'task-text';
+                text.innerHTML = formatFractions(task.text);
+                block.appendChild(text);
+
+                var answer = document.createElement('div');
+                answer.className = 'answer-text';
+                answer.innerHTML = formatFractions(task.answer);
+                block.appendChild(answer);
+
+                var btnSolved = document.createElement('button');
+                btnSolved.className = 'btn-solved' + (isCompleted ? ' marked' : '');
+                btnSolved.textContent = isCompleted ? '✓ решено' : 'решено';
+                btnSolved.onclick = function(taskId) {
+                    return function() { toggleSolved(taskId); };
+                }(task.id);
+                block.appendChild(btnSolved);
+
+                container.appendChild(block);
+            }
+
+            updateCounter();
+        }
+
+        function toggleSolved(taskId) {
+            if (completedTasks[taskId]) {
+                delete completedTasks[taskId];            } else {
+                completedTasks[taskId] = true;
+            }
+            saveCompletedTasks();
+            renderTasks();
+        }
+
+        function toggleSort() {
+            sortUnsolvedFirst = !sortUnsolvedFirst;
+            document.getElementById('sortArrow').textContent = sortUnsolvedFirst ? '↑' : '↓';
+            document.getElementById('sortText').textContent = sortUnsolvedFirst ? 'Сначала не решённые' : 'Сортировка';
+            renderTasks();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCompletedTasks();
+            renderTasks();
+        });
+    </script>
+</body>
+</html>
