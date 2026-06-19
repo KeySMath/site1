@@ -54,7 +54,7 @@
         .status-pending { background: #ffe0e0; color: #c0392b; }
         .status-solved { background: #e0f0f0; color: #0d4f4f; }
         .task-text {
-            font-size: 15px; line-height: 2; color: #0a0a0a;
+            font-size: 16px; line-height: 2; color: #0a0a0a;
             margin-bottom: 15px; font-family: 'Times New Roman', serif;
         }
         .btn-solved {
@@ -64,10 +64,60 @@
         }
         .btn-solved:hover { background: #0d4f4f; color: white; }
         .btn-solved.marked { background: #0d4f4f; color: white; }
-        .frac { display: inline-block; vertical-align: middle; text-align: center; margin: 0 3px; }
-        .frac .num { display: block; border-bottom: 1.5px solid #0a0a0a; padding: 0 4px 2px 4px; font-size: 0.95em; }
-        .frac .den { display: block; padding: 2px 4px 0 4px; font-size: 0.95em; }
-        sup { font-size: 0.75em; } sub { font-size: 0.75em; }
+        
+        /* Дроби */
+        .frac {
+            display: inline-block;
+            vertical-align: middle;
+            text-align: center;
+            margin: 0 3px;
+            font-size: 0.9em;
+        }
+        .frac .num {
+            display: block;
+            border-bottom: 1.5px solid #0a0a0a;
+            padding: 0 4px 2px 4px;
+            font-size: 0.95em;
+            line-height: 1.2;
+        }
+        .frac .den {
+            display: block;
+            padding: 2px 4px 0 4px;
+            font-size: 0.95em;
+            line-height: 1.2;
+        }
+        
+        /* Корни с длинной линией */
+        .sqrt {
+            display: inline-block;
+            vertical-align: middle;
+            position: relative;
+            padding-left: 10px;
+        }
+        .sqrt::before {
+            content: '√';
+            position: absolute;            left: 0;
+            top: -2px;
+            font-size: 1.1em;
+        }
+        .sqrt .sqrt-content {
+            display: inline-block;
+            border-top: 1.5px solid #0a0a0a;
+            padding: 0 3px 1px 3px;
+            line-height: 1.2;
+        }
+        
+        /* Степени */
+        sup { font-size: 0.75em; vertical-align: super; }
+        sub { font-size: 0.75em; vertical-align: sub; }
+        
+        /* Разделитель между а) и б) */
+        .subtask-divider {
+            border: none;
+            border-top: 1px dashed #ccc;
+            margin: 15px 0;
+        }
+        
         @media (min-width: 768px) {
             .header { padding: 15px 25px; }
             .header h1 { font-size: 18px; }
@@ -83,7 +133,7 @@
             .controls { padding: 8px 12px; }
             .tasks-container { padding: 12px; }
             .task-block { padding: 15px; }
-            .task-text { font-size: 14px; }
+            .task-text { font-size: 15px; }
         }
     </style>
 </head>
@@ -95,35 +145,35 @@
     </div>
     <div class="tasks-container" id="tasksContainer"></div>
 
-    <script>
-        var tasks = [            { id: 1, text: '1.1 а) Решите уравнение: log<sub>2</sub>(4x<sup>4</sup>+28) = 2 + log<sub>√2</sub>√(5x<sup>2</sup>+1)' },
+    <script>        var tasks = [
+            { id: 1, text: '1.1 а) Решите уравнение: log<sub>2</sub>(4x<sup>4</sup>+28) = 2 + log<sub>√2</sub><span class="sqrt"><span class="sqrt-content">5x<sup>2</sup>+1</span></span>' },
             { id: 2, text: '1.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">9</span><span class="den">5</span></span>; <span class="frac"><span class="num">7</span><span class="den">5</span></span>]' },
-            { id: 3, text: '1.2 а) Решите уравнение: log<sub>3</sub>(3x<sup>4</sup>+42) = 1 + log<sub>√3</sub>√(13x<sup>2</sup>+2)' },
+            { id: 3, text: '1.2 а) Решите уравнение: log<sub>3</sub>(3x<sup>4</sup>+42) = 1 + log<sub>√3</sub><span class="sqrt"><span class="sqrt-content">13x<sup>2</sup>+2</span></span>' },
             { id: 4, text: '1.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">5</span><span class="den">4</span></span>; 2]' },
-            { id: 5, text: '1.3 а) Решите уравнение: log<sub>5</sub>(5x<sup>4</sup>+30) = 1 + log<sub>√5</sub>√(5x<sup>2</sup>+2)' },
+            { id: 5, text: '1.3 а) Решите уравнение: log<sub>5</sub>(5x<sup>4</sup>+30) = 1 + log<sub>√5</sub><span class="sqrt"><span class="sqrt-content">5x<sup>2</sup>+2</span></span>' },
             { id: 6, text: '1.3 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">5</span><span class="den">3</span></span>; 2<span class="frac"><span class="num">12</span><span class="den">13</span></span>]' },
-            { id: 7, text: '1.4 а) Решите уравнение: log<sub>2</sub>(4x<sup>4</sup>+56) = 2 + log<sub>√2</sub>√(7x<sup>2</sup>+2)' },
+            { id: 7, text: '1.4 а) Решите уравнение: log<sub>2</sub>(4x<sup>4</sup>+56) = 2 + log<sub>√2</sub><span class="sqrt"><span class="sqrt-content">7x<sup>2</sup>+2</span></span>' },
             { id: 8, text: '1.4 б) Найдите все корни этого уравнения, принадлежащие отрезку [−1<span class="frac"><span class="num">7</span><span class="den">10</span></span>; 1<span class="frac"><span class="num">4</span><span class="den">5</span></span>]' },
-            { id: 9, text: '2.1 а) Решите уравнение: 1 + log<sub>2</sub>(9x<sup>2</sup>+1) = log<sub>√2</sub>√(2x<sup>4</sup>+42)' },
+            { id: 9, text: '2.1 а) Решите уравнение: 1 + log<sub>2</sub>(9x<sup>2</sup>+1) = log<sub>√2</sub><span class="sqrt"><span class="sqrt-content">2x<sup>4</sup>+42</span></span>' },
             { id: 10, text: '2.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [<span class="frac"><span class="num">3</span><span class="den">2</span></span>; <span class="frac"><span class="num">5</span><span class="den">2</span></span>]' },
-            { id: 11, text: '2.2 а) Решите уравнение: 1 + log<sub>3</sub>(10x<sup>2</sup>+1) = log<sub>√3</sub>√(3x<sup>4</sup>+30)' },
+            { id: 11, text: '2.2 а) Решите уравнение: 1 + log<sub>3</sub>(10x<sup>2</sup>+1) = log<sub>√3</sub><span class="sqrt"><span class="sqrt-content">3x<sup>4</sup>+30</span></span>' },
             { id: 12, text: '2.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">11</span><span class="den">4</span></span>; <span class="frac"><span class="num">2</span><span class="den">3</span></span>]' },
-            { id: 13, text: '2.3 а) Решите уравнение: 1 + log<sub>5</sub>(5x<sup>2</sup>+20) = log<sub>√5</sub>√(5x<sup>4</sup>+30)' },
+            { id: 13, text: '2.3 а) Решите уравнение: 1 + log<sub>5</sub>(5x<sup>2</sup>+20) = log<sub>√5</sub><span class="sqrt"><span class="sqrt-content">5x<sup>4</sup>+30</span></span>' },
             { id: 14, text: '2.3 б) Найдите все корни этого уравнения, принадлежащие отрезку [−3<span class="frac"><span class="num">1</span><span class="den">5</span></span>; 2<span class="frac"><span class="num">3</span><span class="den">5</span></span>]' },
-            { id: 15, text: '2.4 а) Решите уравнение: 1 + log<sub>6</sub>(4x<sup>2</sup>+21) = log<sub>√6</sub>√(3x<sup>4</sup>+27)' },
+            { id: 15, text: '2.4 а) Решите уравнение: 1 + log<sub>6</sub>(4x<sup>2</sup>+21) = log<sub>√6</sub><span class="sqrt"><span class="sqrt-content">3x<sup>4</sup>+27</span></span>' },
             { id: 16, text: '2.4 б) Найдите все корни этого уравнения, принадлежащие отрезку [−3; 4]' },
-            { id: 17, text: '3.1 а) Решите уравнение: 1 + log<sub>3</sub>(x<sup>4</sup>+16) = log<sub>√3</sub>√(21x<sup>2</sup>+18)' },
+            { id: 17, text: '3.1 а) Решите уравнение: 1 + log<sub>3</sub>(x<sup>4</sup>+16) = log<sub>√3</sub><span class="sqrt"><span class="sqrt-content">21x<sup>2</sup>+18</span></span>' },
             { id: 18, text: '3.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">3</span><span class="den">2</span></span>; <span class="frac"><span class="num">5</span><span class="den">2</span></span>]' },
-            { id: 19, text: '3.2 а) Решите уравнение: 1 + log<sub>3</sub>(x<sup>4</sup>+25) = log<sub>√3</sub>√(30x<sup>2</sup>+12)' },
+            { id: 19, text: '3.2 а) Решите уравнение: 1 + log<sub>3</sub>(x<sup>4</sup>+25) = log<sub>√3</sub><span class="sqrt"><span class="sqrt-content">30x<sup>2</sup>+12</span></span>' },
             { id: 20, text: '3.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [−2<span class="frac"><span class="num">1</span><span class="den">5</span></span>; 3<span class="frac"><span class="num">1</span><span class="den">5</span></span>]' },
             { id: 21, text: '4.1 а) Решите уравнение: 8<sup>x</sup> − 3·4<sup>x</sup> − 2<sup>x</sup> + 3 = 0' },
             { id: 22, text: '4.1 б) Укажите корни этого уравнения, принадлежащие отрезку [1,5; 3]' },
             { id: 23, text: '4.2 а) Решите уравнение: 27<sup>x</sup> − 2·9<sup>x</sup> − 3<sup>x</sup> + 2 = 0' },
             { id: 24, text: '4.2 б) Укажите корни этого уравнения, принадлежащие отрезку [0,5; 2]' },
             { id: 25, text: '5.1 а) Решите уравнение: 9<sup>x+1</sup> − 2·3<sup>x+2</sup> + 5 = 0' },
-            { id: 26, text: '5.1 б) Найдите все корни этого уравнения, принадлежащие промежутку (log<sub>3</sub><span class="frac"><span class="num">3</span><span class="den">2</span></span>; √5)' },
+            { id: 26, text: '5.1 б) Найдите все корни этого уравнения, принадлежащие промежутку (log<sub>3</sub><span class="frac"><span class="num">3</span><span class="den">2</span></span>; <span class="sqrt"><span class="sqrt-content">5</span></span>)' },
             { id: 27, text: '5.2 а) Решите уравнение: 16<sup>x−1</sup> − 3·4<sup>x</sup> + 11 = 0' },
-            { id: 28, text: '5.2 б) Найдите все корни этого уравнения, принадлежащие промежутку (log<sub>4</sub>25; √10)' },
+            { id: 28, text: '5.2 б) Найдите все корни этого уравнения, принадлежащие промежутку (log<sub>4</sub>25; <span class="sqrt"><span class="sqrt-content">10</span></span>)' },
             { id: 29, text: '6.1 а) (ОБЗ) Решите уравнение: 8<sup>x</sup> − 3·2<sup>x+2</sup> + 2<sup>5−x</sup> = 0' },
             { id: 30, text: '6.1 б) Укажите корни этого уравнения, принадлежащие отрезку [log<sub>4</sub>5; 3]' },
             { id: 31, text: '6.2 а) (ОБЗ) Решите уравнение: 27<sup>x</sup> − 4·3<sup>x+2</sup> + 3<sup>5−x</sup> = 0' },
@@ -131,7 +181,7 @@
             { id: 33, text: '6.3 а) (ОБЗ) Решите уравнение: 8<sup>x</sup> − 9·2<sup>x+1</sup> + 2<sup>5−x</sup> = 0' },
             { id: 34, text: '6.3 б) Укажите корни этого уравнения, принадлежащие отрезку [log<sub>5</sub>2; log<sub>5</sub>20]' },
             { id: 35, text: '6.4 а) (ОБЗ) Решите уравнение: 27<sup>x</sup> − 28·3<sup>x+1</sup> + 3<sup>5−x</sup> = 0' },
-            { id: 36, text: '6.4 б) Найдите все корни этого уравнения, принадлежащие промежутку [√3; log<sub>2</sub>5]' },
+            { id: 36, text: '6.4 б) Найдите все корни этого уравнения, принадлежащие промежутку [<span class="sqrt"><span class="sqrt-content">3</span></span>; log<sub>2</sub>5]' },
             { id: 37, text: '7.1 а) Решите уравнение: 4<sup>x−<span class="frac"><span class="num">1</span><span class="den">2</span></span></sup> − 5·2<sup>x−1</sup> + 3 = 0' },
             { id: 38, text: '7.1 б) Найдите все корни этого уравнения, принадлежащие промежутку (1; <span class="frac"><span class="num">5</span><span class="den">3</span></span>)' },
             { id: 39, text: '7.2 а) Решите уравнение: 9<sup>x−<span class="frac"><span class="num">1</span><span class="den">2</span></span></sup> − 8·3<sup>x−1</sup> + 5 = 0' },
@@ -144,8 +194,8 @@
             { id: 46, text: '8.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [π; <span class="frac"><span class="num">5π</span><span class="den">2</span></span>]' },
             { id: 47, text: '8.2 а) Решите уравнение: 6cos<sup>2</sup>x − 5sinx − 2 = 0' },
             { id: 48, text: '8.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">7π</span><span class="den">2</span></span>; −<span class="frac"><span class="num">5π</span><span class="den">2</span></span>]' },
-            { id: 49, text: '8.3 а) Решите уравнение: 4cos<sup>2</sup>x − 8sinx + 1 = 0' },
-            { id: 50, text: '8.3 б) Найдите все корни этого уравнения, принадлежащие отрезку [−3π; −<span class="frac"><span class="num">3π</span><span class="den">2</span></span>]' },            { id: 51, text: '8.4 а) Решите уравнение: 8cos<sup>2</sup>x − 6sinx − 3 = 0' },
+            { id: 49, text: '8.3 а) Решите уравнение: 4cos<sup>2</sup>x − 8sinx + 1 = 0' },            { id: 50, text: '8.3 б) Найдите все корни этого уравнения, принадлежащие отрезку [−3π; −<span class="frac"><span class="num">3π</span><span class="den">2</span></span>]' },
+            { id: 51, text: '8.4 а) Решите уравнение: 8cos<sup>2</sup>x − 6sinx − 3 = 0' },
             { id: 52, text: '8.4 б) Найдите все корни этого уравнения, принадлежащие отрезку [<span class="frac"><span class="num">5π</span><span class="den">2</span></span>; 4π]' },
             { id: 53, text: '9.1 а) Решите уравнение: 6sin<sup>2</sup>x + 7cosx − 1 = 0' },
             { id: 54, text: '9.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">7π</span><span class="den">2</span></span>; −<span class="frac"><span class="num">5π</span><span class="den">2</span></span>]' },
@@ -193,8 +243,8 @@
             { id: 96, text: '16.4 б) Найдите все корни этого уравнения, принадлежащие отрезку [3π; <span class="frac"><span class="num">9π</span><span class="den">2</span></span>]' },
             { id: 97, text: '17.1 а) Решите уравнение: cos2x + sin<sup>2</sup>x = 0,5' },
             { id: 98, text: '17.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">7π</span><span class="den">2</span></span>; −2π]' },
-            { id: 99, text: '17.2 а) Решите уравнение: cos2x + sin<sup>2</sup>x = 0,25' },
-            { id: 100, text: '17.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [3π; <span class="frac"><span class="num">9π</span><span class="den">2</span></span>]' },            { id: 101, text: '17.3 а) Решите уравнение: cos2x + sin<sup>2</sup>x = 0,75' },
+            { id: 99, text: '17.2 а) Решите уравнение: cos2x + sin<sup>2</sup>x = 0,25' },            { id: 100, text: '17.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [3π; <span class="frac"><span class="num">9π</span><span class="den">2</span></span>]' },
+            { id: 101, text: '17.3 а) Решите уравнение: cos2x + sin<sup>2</sup>x = 0,75' },
             { id: 102, text: '17.3 б) Найдите все корни этого уравнения, принадлежащие отрезку [π; <span class="frac"><span class="num">5π</span><span class="den">2</span></span>]' },
             { id: 103, text: '18.1 а) Решите уравнение: cos2x + 0,25 = cos<sup>2</sup>x' },
             { id: 104, text: '18.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [2π; <span class="frac"><span class="num">7π</span><span class="den">2</span></span>]' },
@@ -210,273 +260,10 @@
             { id: 114, text: '20.1 б) Укажите корни этого уравнения, принадлежащие отрезку [−4π; −<span class="frac"><span class="num">π</span><span class="den">2</span></span>]' },
             { id: 115, text: '20.2 а) (ОБЗ) Решите уравнение: 2cos<sup>3</sup>x − cos<sup>2</sup>x + 2cosx − 1 = 0' },
             { id: 116, text: '20.2 б) Укажите корни этого уравнения, принадлежащие отрезку [2π; <span class="frac"><span class="num">7π</span><span class="den">2</span></span>]' },
-            { id: 117, text: '20.3 а) (ОБЗ) Решите уравнение: √2sin<sup>3</sup>x − sin<sup>2</sup>x + 2sinx − 1 = 0' },
+            { id: 117, text: '20.3 а) (ОБЗ) Решите уравнение: √2sin<sup>3</sup>x − sin<sup>2</sup>x + √2sinx − 1 = 0' },
             { id: 118, text: '20.3 б) Укажите корни этого уравнения, принадлежащие отрезку [π; <span class="frac"><span class="num">5π</span><span class="den">2</span></span>]' },
             { id: 119, text: '20.4 а) (ОБЗ) Решите уравнение: 2cos<sup>3</sup>x + √3cos<sup>2</sup>x + 2cosx + √3 = 0' },
-            { id: 120, text: '20.4 б) Укажите корни этого уравнения, принадлежащие отрезку [−2π; −<span class="frac"><span class="num">π</span><span class="den">2</span></span>]' },
-            { id: 121, text: '21.1 а) Решите уравнение: 2sin<sup>3</sup>x − 2sinx + cos<sup>2</sup>x = 0' },
-            { id: 122, text: '21.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">7π</span><span class="den">2</span></span>; −2π]' },
-            { id: 123, text: '21.2 а) Решите уравнение: √2sin<sup>3</sup>x − √2sinx + cos<sup>2</sup>x = 0' },
-            { id: 124, text: '21.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">5π</span><span class="den">2</span></span>; −π]' },
-            { id: 125, text: '22.1 а) Решите уравнение: 2cos<sup>3</sup>x − 2cosx + sin<sup>2</sup>x = 0' },
-            { id: 126, text: '22.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [<span class="frac"><span class="num">3π</span><span class="den">2</span></span>; 3π]' },
-            { id: 127, text: '22.2 а) Решите уравнение: √2cos<sup>3</sup>x − √2cosx + sin<sup>2</sup>x = 0' },
-            { id: 128, text: '22.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [<span class="frac"><span class="num">5π</span><span class="den">2</span></span>; 4π]' },
-            { id: 129, text: '23.1 а) (ОБЗ) Решите уравнение: 2sin<sup>3</sup>x = √3cos<sup>2</sup>x + 2sinx' },
-            { id: 130, text: '23.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [2π; <span class="frac"><span class="num">7π</span><span class="den">2</span></span>]' },
-            { id: 131, text: '23.2 а) (ОБЗ) Решите уравнение: 2sin<sup>3</sup>x = √2cos<sup>2</sup>x + 2sinx' },
-            { id: 132, text: '23.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [−4π; −<span class="frac"><span class="num">5π</span><span class="den">2</span></span>]' },
-            { id: 133, text: '24.1 а) (ОБЗ) Решите уравнение: 2cos<sup>3</sup>x + √3sin<sup>2</sup>x = 2cosx' },
-            { id: 134, text: '24.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">7π</span><span class="den">2</span></span>; −2π]' },
-            { id: 135, text: '24.2 а) (ОБЗ) Решите уравнение: 2cos<sup>3</sup>x + 2sin<sup>2</sup>x = 2cosx' },
-            { id: 136, text: '24.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [<span class="frac"><span class="num">5π</span><span class="den">2</span></span>; 4π]' },
-            { id: 137, text: '25.1 а) Решите уравнение: 2sin<sup>3</sup>x + √2 = √2cos<sup>2</sup>x' },
-            { id: 138, text: '25.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [−4π; −<span class="frac"><span class="num">5π</span><span class="den">2</span></span>]' },
-            { id: 139, text: '25.2 а) Решите уравнение: 2sin<sup>3</sup>x + √3cos<sup>2</sup>x = √3' },
-            { id: 140, text: '25.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">7π</span><span class="den">2</span></span>; −2π]' },
-            { id: 141, text: '26.1 а) Решите уравнение: sin2x = sinx − 2cosx + 1' },
-            { id: 142, text: '26.1 б) Укажите корни этого уравнения, принадлежащие отрезку [<span class="frac"><span class="num">3π</span><span class="den">2</span></span>; 3π]' },
-            { id: 143, text: '26.2 а) Решите уравнение: sin2x = 2cosx − sinx + 1' },
-            { id: 144, text: '26.2 б) Укажите корни этого уравнения, принадлежащие отрезку [<span class="frac"><span class="num">π</span><span class="den">2</span></span>; <span class="frac"><span class="num">3π</span><span class="den">2</span></span>]' },
-            { id: 145, text: '26.3 а) Решите уравнение: sin2x + 2sinx = 3cosx + √3' },
-            { id: 146, text: '26.3 б) Укажите корни этого уравнения, принадлежащие отрезку [−3π; −<span class="frac"><span class="num">3π</span><span class="den">2</span></span>]' },
-            { id: 147, text: '26.4 а) Решите уравнение: sin2x + √2sinx = 2cosx + √2' },
-            { id: 148, text: '26.4 б) Укажите корни этого уравнения, принадлежащие отрезку [π; <span class="frac"><span class="num">5π</span><span class="den">2</span></span>]' },
-            { id: 149, text: '27.1 а) (ОБЗ) Решите уравнение: sin2x + 2sin(−x) + cos(−x) − 1 = 0' },
-            { id: 150, text: '27.1 б) Найдите корни этого уравнения, принадлежащие отрезку [2π; <span class="frac"><span class="num">7π</span><span class="den">2</span></span>]' },            { id: 151, text: '27.2 а) (ОБЗ) Решите уравнение: sin2x − sin(−x) + 2cos(−x) + 1 = 0' },
-            { id: 152, text: '27.2 б) Найдите корни этого уравнения, принадлежащие отрезку [<span class="frac"><span class="num">3π</span><span class="den">2</span></span>; 3π]' },
-            { id: 153, text: '28.1 а) (ОБЗ) Решите уравнение: 2sin<sup>2</sup>x·cosx + 2cos<sup>2</sup>x = √2' },
-            { id: 154, text: '28.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">7π</span><span class="den">2</span></span>; −2π]' },
-            { id: 155, text: '28.2 а) (ОБЗ) Решите уравнение: 2sinx·cos<sup>2</sup>x + √3 = √3sin<sup>2</sup>x' },
-            { id: 156, text: '28.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [<span class="frac"><span class="num">7π</span><span class="den">2</span></span>; 5π]' },
-            { id: 157, text: '29.1 а) (ОБЗ) Решите уравнение: cosx·cos2x = √2sin<sup>2</sup>x + cosx' },
-            { id: 158, text: '29.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">5π</span><span class="den">2</span></span>; −π]' },
-            { id: 159, text: '29.2 а) (ОБЗ) Решите уравнение: sinx·cos2x + √2cos<sup>2</sup>x + sinx = 0' },
-            { id: 160, text: '29.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [<span class="frac"><span class="num">3π</span><span class="den">2</span></span>; 3π]' },
-            { id: 161, text: '30.1 а) (ОБЗ) Решите уравнение: √3tg<sup>2</sup>x − 4tgx + √3 = 0' },
-            { id: 162, text: '30.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [π; 2,5π]' },
-            { id: 163, text: '30.2 а) (ОБЗ) Решите уравнение: tg<sup>2</sup>x + (1+√3)tgx + √3 = 0' },
-            { id: 164, text: '30.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [2,5π; 4π]' },
-            { id: 165, text: '31.1 а) Решите уравнение: <span class="frac"><span class="num">sinx</span><span class="den">cos<sup>2</sup><span class="frac"><span class="num">x</span><span class="den">2</span></span></span></span> = 4sin<sup>2</sup><span class="frac"><span class="num">x</span><span class="den">2</span></span>' },
-            { id: 166, text: '31.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [−4π; −<span class="frac"><span class="num">5π</span><span class="den">2</span></span>]' },
-            { id: 167, text: '31.2 а) Решите уравнение: <span class="frac"><span class="num">sinx</span><span class="den">sin<sup>2</sup><span class="frac"><span class="num">x</span><span class="den">2</span></span></span></span> = 4cos<sup>2</sup><span class="frac"><span class="num">x</span><span class="den">2</span></span>' },
-            { id: 168, text: '31.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">9π</span><span class="den">2</span></span>; −3π]' },
-            { id: 169, text: '32.1 а) Решите уравнение: 2cos<sup>2</sup>x + 3sin(x+π) − 3 = 0' },
-            { id: 170, text: '32.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [2π; <span class="frac"><span class="num">7π</span><span class="den">2</span></span>]' },
-            { id: 171, text: '32.2 а) Решите уравнение: 2sin<sup>2</sup>x − cos(x+π) − 1 = 0' },
-            { id: 172, text: '32.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">7π</span><span class="den">2</span></span>; −2π]' },
-            { id: 173, text: '33.1 а) Решите уравнение: 4cos<sup>2</sup>x + 8sin(<span class="frac"><span class="num">3π</span><span class="den">2</span></span>−x) − 5 = 0' },
-            { id: 174, text: '33.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">7π</span><span class="den">2</span></span>; −2π]' },
-            { id: 175, text: '33.2 а) Решите уравнение: 8sin<sup>2</sup>x + 2√3cos(<span class="frac"><span class="num">3π</span><span class="den">2</span></span>−x) − 9 = 0' },
-            { id: 176, text: '33.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">5π</span><span class="den">2</span></span>; −π]' },
-            { id: 177, text: '34.1 а) Решите уравнение: 6sin<sup>2</sup>x + 5sin(<span class="frac"><span class="num">π</span><span class="den">2</span></span>−x) − 2 = 0' },
-            { id: 178, text: '34.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [−5π; −<span class="frac"><span class="num">7π</span><span class="den">2</span></span>]' },
-            { id: 179, text: '34.2 а) Решите уравнение: 4sin<sup>2</sup>x + 8sin(<span class="frac"><span class="num">3π</span><span class="den">2</span></span>+x) + 1 = 0' },
-            { id: 180, text: '34.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [−3π; −<span class="frac"><span class="num">3π</span><span class="den">2</span></span>]' },
-            { id: 181, text: '35.1 а) Решите уравнение: 6cos<sup>2</sup>x − 7cos(<span class="frac"><span class="num">3π</span><span class="den">2</span></span>−x) − 1 = 0' },
-            { id: 182, text: '35.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [2π; <span class="frac"><span class="num">7π</span><span class="den">2</span></span>]' },
-            { id: 183, text: '35.2 а) Решите уравнение: 4cos<sup>2</sup>x + 4cos(<span class="frac"><span class="num">π</span><span class="den">2</span></span>+x) − 1 = 0' },
-            { id: 184, text: '35.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [π; <span class="frac"><span class="num">5π</span><span class="den">2</span></span>]' },
-            { id: 185, text: '36.1 а) Решите уравнение: 2cos<sup>2</sup>x + 1 = 2√2cos(<span class="frac"><span class="num">3π</span><span class="den">2</span></span>−x)' },
-            { id: 186, text: '36.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [<span class="frac"><span class="num">3π</span><span class="den">2</span></span>; 3π]' },
-            { id: 187, text: '36.2 а) Решите уравнение: 2sin<sup>2</sup>x + 4 = 3√3sin(<span class="frac"><span class="num">3π</span><span class="den">2</span></span>+x)' },
-            { id: 188, text: '36.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">5π</span><span class="den">2</span></span>; −π]' },
-            { id: 189, text: '37.1 а) (ОБЗ) Решите уравнение: cos2x − √2sin(x+π) − 1 = 0' },
-            { id: 190, text: '37.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">7π</span><span class="den">2</span></span>; −2π]' },
-            { id: 191, text: '37.2 а) (ОБЗ) Решите уравнение: cos2x + √2cos(x+π) + 1 = 0' },
-            { id: 192, text: '37.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [−4π; −<span class="frac"><span class="num">5π</span><span class="den">2</span></span>]' },
-            { id: 193, text: '38.1 а) (ОБЗ) Решите уравнение: 2cos2x = 4sin(<span class="frac"><span class="num">π</span><span class="den">2</span></span>+x) + 1' },
-            { id: 194, text: '38.1 б) Укажите корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">5π</span><span class="den">2</span></span>; −π]' },
-            { id: 195, text: '38.2 а) (ОБЗ) Решите уравнение: cos2x + √2sin(<span class="frac"><span class="num">π</span><span class="den">2</span></span>+x) + 1 = 0' },
-            { id: 196, text: '38.2 б) Укажите корни этого уравнения, принадлежащие отрезку [−3π; −<span class="frac"><span class="num">3π</span><span class="den">2</span></span>]' },
-            { id: 197, text: '39.1 а) (ОБЗ) Решите уравнение: cos2x + 2 = √3cos(<span class="frac"><span class="num">3π</span><span class="den">2</span></span>−x)' },
-            { id: 198, text: '39.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [−3π; −<span class="frac"><span class="num">3π</span><span class="den">2</span></span>]' },
-            { id: 199, text: '39.2 а) (ОБЗ) Решите уравнение: cos2x − √2cos(<span class="frac"><span class="num">3π</span><span class="den">2</span></span>+x) − 1 = 0' },
-            { id: 200, text: '39.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [<span class="frac"><span class="num">3π</span><span class="den">2</span></span>; 3π]' },            { id: 201, text: '39.3 а) (ОБЗ) Решите уравнение: 2cos2x + 4cos(<span class="frac"><span class="num">3π</span><span class="den">2</span></span>−x) + 1 = 0' },
-            { id: 202, text: '39.3 б) Найдите все корни этого уравнения, принадлежащие отрезку [<span class="frac"><span class="num">3π</span><span class="den">2</span></span>; 3π]' },
-            { id: 203, text: '40.1 а) (ОБЗ) Решите уравнение: cos2x + 3sin(<span class="frac"><span class="num">π</span><span class="den">2</span></span>+x) + 1 = 0' },
-            { id: 204, text: '40.1 б) Укажите корни этого уравнения, принадлежащие отрезку [−3π; −<span class="frac"><span class="num">3π</span><span class="den">2</span></span>]' },
-            { id: 205, text: '40.2 а) (ОБЗ) Решите уравнение: cos2x − sin(<span class="frac"><span class="num">π</span><span class="den">2</span></span>−x) + 1 = 0' },
-            { id: 206, text: '40.2 б) Укажите корни этого уравнения, принадлежащие отрезку [<span class="frac"><span class="num">5π</span><span class="den">2</span></span>; 4π]' },
-            { id: 207, text: '40.3 а) (ОБЗ) Решите уравнение: cos2x − √2sin(<span class="frac"><span class="num">π</span><span class="den">2</span></span>−x) + 1 = 0' },
-            { id: 208, text: '40.3 б) Укажите корни этого уравнения, принадлежащие отрезку [−4π; −<span class="frac"><span class="num">5π</span><span class="den">2</span></span>]' },
-            { id: 209, text: '41.1 а) Решите уравнение: 2sin<sup>2</sup>x = cos(<span class="frac"><span class="num">3π</span><span class="den">2</span></span>−x)' },
-            { id: 210, text: '41.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">5π</span><span class="den">2</span></span>; −π]' },
-            { id: 211, text: '41.2 а) Решите уравнение: √2sin<sup>2</sup>x = cos(<span class="frac"><span class="num">π</span><span class="den">2</span></span>−x)' },
-            { id: 212, text: '41.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [−3π; −<span class="frac"><span class="num">3π</span><span class="den">2</span></span>]' },
-            { id: 213, text: '41.3 а) Решите уравнение: 2sin<sup>2</sup>x = 3cos(<span class="frac"><span class="num">π</span><span class="den">2</span></span>+x)' },
-            { id: 214, text: '41.3 б) Найдите все корни этого уравнения, принадлежащие отрезку [<span class="frac"><span class="num">3π</span><span class="den">2</span></span>; 3π]' },
-            { id: 215, text: '42.1 а) Решите уравнение: 2cos<sup>2</sup>x = sin(<span class="frac"><span class="num">π</span><span class="den">2</span></span>−x)' },
-            { id: 216, text: '42.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [<span class="frac"><span class="num">5π</span><span class="den">2</span></span>; 4π]' },
-            { id: 217, text: '42.2 а) Решите уравнение: √2cos<sup>2</sup>x = sin(<span class="frac"><span class="num">π</span><span class="den">2</span></span>+x)' },
-            { id: 218, text: '42.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">7π</span><span class="den">2</span></span>; −2π]' },
-            { id: 219, text: '42.3 а) Решите уравнение: 2cos<sup>2</sup>x = √3sin(<span class="frac"><span class="num">3π</span><span class="den">2</span></span>+x)' },
-            { id: 220, text: '42.3 б) Найдите все корни этого уравнения, принадлежащие отрезку [π; <span class="frac"><span class="num">5π</span><span class="den">2</span></span>]' },
-            { id: 221, text: '43.1 а) Решите уравнение: 2sin<sup>3</sup>x = cos(x−<span class="frac"><span class="num">π</span><span class="den">2</span></span>)' },
-            { id: 222, text: '43.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">3π</span><span class="den">2</span></span>; −<span class="frac"><span class="num">π</span><span class="den">2</span></span>]' },
-            { id: 223, text: '43.2 а) Решите уравнение: 4sin<sup>3</sup>x = 3cos(x−<span class="frac"><span class="num">π</span><span class="den">2</span></span>)' },
-            { id: 224, text: '43.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [<span class="frac"><span class="num">7π</span><span class="den">2</span></span>; <span class="frac"><span class="num">9π</span><span class="den">2</span></span>]' },
-            { id: 225, text: '44.1 а) Решите уравнение: 2cos<sup>3</sup>x = −sin(x+<span class="frac"><span class="num">3π</span><span class="den">2</span></span>)' },
-            { id: 226, text: '44.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [3π; 4π]' },
-            { id: 227, text: '44.2 а) Решите уравнение: 2cos<sup>3</sup>x = sin(<span class="frac"><span class="num">5π</span><span class="den">2</span></span>−x)' },
-            { id: 228, text: '44.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [−2π; −π]' },
-            { id: 229, text: '45.1 а) (ОБЗ) Решите уравнение: sin2x + √2sin(x+π) = 0' },
-            { id: 230, text: '45.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [−4π; −<span class="frac"><span class="num">5π</span><span class="den">2</span></span>]' },
-            { id: 231, text: '45.2 а) (ОБЗ) Решите уравнение: sin2x + √2cos(x+π) = 0' },
-            { id: 232, text: '45.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [3π; <span class="frac"><span class="num">9π</span><span class="den">2</span></span>]' },
-            { id: 233, text: '46.1 а) Решите уравнение: sin2x = sin(x+<span class="frac"><span class="num">3π</span><span class="den">2</span></span>)' },
-            { id: 234, text: '46.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">7π</span><span class="den">2</span></span>; −<span class="frac"><span class="num">5π</span><span class="den">2</span></span>]' },
-            { id: 235, text: '46.2 а) Решите уравнение: sin2x = √3sin(<span class="frac"><span class="num">5π</span><span class="den">2</span></span>+x)' },
-            { id: 236, text: '46.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [<span class="frac"><span class="num">7π</span><span class="den">2</span></span>; <span class="frac"><span class="num">9π</span><span class="den">2</span></span>]' },
-            { id: 237, text: '46.3 а) Решите уравнение: sin2x = √2sin(<span class="frac"><span class="num">π</span><span class="den">2</span></span>−x)' },
-            { id: 238, text: '46.3 б) Найдите все корни этого уравнения, принадлежащие отрезку [<span class="frac"><span class="num">5π</span><span class="den">2</span></span>; <span class="frac"><span class="num">7π</span><span class="den">2</span></span>]' },
-            { id: 239, text: '46.4 а) Решите уравнение: sin2x = sin(<span class="frac"><span class="num">π</span><span class="den">2</span></span>+x)' },
-            { id: 240, text: '46.4 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">3π</span><span class="den">2</span></span>; −<span class="frac"><span class="num">π</span><span class="den">2</span></span>]' },
-            { id: 241, text: '47.1 а) Решите уравнение: sin2x = cos(<span class="frac"><span class="num">5π</span><span class="den">2</span></span>−x)' },
-            { id: 242, text: '47.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">9π</span><span class="den">2</span></span>; −<span class="frac"><span class="num">7π</span><span class="den">2</span></span>]' },
-            { id: 243, text: '47.2 а) Решите уравнение: sin2x = √2cos(<span class="frac"><span class="num">π</span><span class="den">2</span></span>+x)' },
-            { id: 244, text: '47.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [−2π; −π]' },
-            { id: 245, text: '47.3 а) Решите уравнение: sin2x = √3cos(<span class="frac"><span class="num">3π</span><span class="den">2</span></span>−x)' },
-            { id: 246, text: '47.3 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">9π</span><span class="den">2</span></span>; −<span class="frac"><span class="num">7π</span><span class="den">2</span></span>]' },
-            { id: 247, text: '47.4 а) Решите уравнение: sin2x = cos(x+<span class="frac"><span class="num">3π</span><span class="den">2</span></span>)' },
-            { id: 248, text: '47.4 б) Найдите все корни этого уравнения, принадлежащие отрезку [<span class="frac"><span class="num">3π</span><span class="den">2</span></span>; <span class="frac"><span class="num">5π</span><span class="den">2</span></span>]' },
-            { id: 249, text: '48.1 а) Решите уравнение: cos(2x+<span class="frac"><span class="num">π</span><span class="den">2</span></span>) + sinx = 0' },
-            { id: 250, text: '48.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [<span class="frac"><span class="num">3π</span><span class="den">2</span></span>; <span class="frac"><span class="num">5π</span><span class="den">2</span></span>]' },            { id: 251, text: '48.2 а) Решите уравнение: cos(<span class="frac"><span class="num">π</span><span class="den">2</span></span>−2x) + sinx = 0' },
-            { id: 252, text: '48.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">3π</span><span class="den">2</span></span>; −<span class="frac"><span class="num">π</span><span class="den">2</span></span>]' },
-            { id: 253, text: '49.1 а) Решите уравнение: 2sin(<span class="frac"><span class="num">7π</span><span class="den">2</span></span>−x)·sinx = cosx' },
-            { id: 254, text: '49.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [<span class="frac"><span class="num">7π</span><span class="den">2</span></span>; 5π]' },
-            { id: 255, text: '49.2 а) Решите уравнение: −√2sin(<span class="frac"><span class="num">5π</span><span class="den">2</span></span>+x)·sinx = cosx' },
-            { id: 256, text: '49.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [<span class="frac"><span class="num">9π</span><span class="den">2</span></span>; 6π]' },
-            { id: 257, text: '49.3 а) Решите уравнение: √2sin(<span class="frac"><span class="num">3π</span><span class="den">2</span></span>−x)·sinx = cosx' },
-            { id: 258, text: '49.3 б) Найдите все корни этого уравнения, принадлежащие отрезку [−5π; −4π]' },
-            { id: 259, text: '49.4 а) Решите уравнение: 2sin(<span class="frac"><span class="num">7π</span><span class="den">2</span></span>+x)·sinx = √3cosx' },
-            { id: 260, text: '49.4 б) Найдите все корни этого уравнения, принадлежащие отрезку [−7π; −6π]' },
-            { id: 261, text: '50.1 а) Решите уравнение: 4cos<sup>3</sup>x + sin(x−<span class="frac"><span class="num">π</span><span class="den">2</span></span>) = 0' },
-            { id: 262, text: '50.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [π; 2π]' },
-            { id: 263, text: '50.2 а) Решите уравнение: 4cos<sup>3</sup>x + 3sin(x+<span class="frac"><span class="num">3π</span><span class="den">2</span></span>) = 0' },
-            { id: 264, text: '50.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [−2π; −π]' },
-            { id: 265, text: '51.1 а) (ОБЗ) Решите уравнение: 2sin<sup>2</sup>(<span class="frac"><span class="num">3π</span><span class="den">2</span></span>+x) + cos(π−x) = 0' },
-            { id: 266, text: '51.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [−2π; −<span class="frac"><span class="num">π</span><span class="den">2</span></span>]' },
-            { id: 267, text: '51.2 а) (ОБЗ) Решите уравнение: 2sin<sup>2</sup>(x+π) − cos(<span class="frac"><span class="num">π</span><span class="den">2</span></span>−x) = 0' },
-            { id: 268, text: '51.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">5π</span><span class="den">2</span></span>; −π]' },
-            { id: 269, text: '52.1 а) Решите уравнение: 2√3cos<sup>2</sup>(<span class="frac"><span class="num">3π</span><span class="den">2</span></span>+x) − sin2x = 0' },
-            { id: 270, text: '52.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [1,5π; 3π]' },
-            { id: 271, text: '52.2 а) Решите уравнение: 2cos<sup>2</sup>(<span class="frac"><span class="num">3π</span><span class="den">2</span></span>+x) + sin2x = 0' },
-            { id: 272, text: '52.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [−3π; −1,5π]' },
-            { id: 273, text: '53.1 а) (ОБЗ) Решите уравнение: 2√3sin<sup>2</sup>(x+<span class="frac"><span class="num">3π</span><span class="den">2</span></span>) + sin2x = 0' },
-            { id: 274, text: '53.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [−4π; −<span class="frac"><span class="num">5π</span><span class="den">2</span></span>]' },
-            { id: 275, text: '53.2 а) (ОБЗ) Решите уравнение: 2sin<sup>2</sup>(<span class="frac"><span class="num">π</span><span class="den">2</span></span>−x) + sin2x = 0' },
-            { id: 276, text: '53.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [3π; <span class="frac"><span class="num">9π</span><span class="den">2</span></span>]' },
-            { id: 277, text: '54.1 а) (ОБЗ) Решите уравнение: 2sin<sup>2</sup>x + √2sin(2π−x) + √3sin2x = √6cosx' },
-            { id: 278, text: '54.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [−π; <span class="frac"><span class="num">π</span><span class="den">2</span></span>]' },
-            { id: 279, text: '54.2 а) (ОБЗ) Решите уравнение: 2sin<sup>2</sup>x + √2sin(2π+x) − √3sin2x = √6cosx' },
-            { id: 280, text: '54.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [<span class="frac"><span class="num">3π</span><span class="den">2</span></span>; 3π]' },
-            { id: 281, text: '55.1 а) (Демо) Решите уравнение: 2 + 2cos(π−2x) + √8sinx = √6 + √12sinx' },
-            { id: 282, text: '55.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [3π; <span class="frac"><span class="num">9π</span><span class="den">2</span></span>]' },
-            { id: 283, text: '55.2 а) (Демо) Решите уравнение: 2 − 2cos(π+2x) − √8cosx = √6 − 12cosx' },
-            { id: 284, text: '55.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [<span class="frac"><span class="num">π</span><span class="den">2</span></span>; 2π]' },
-            { id: 285, text: '56.1 а) (ОБЗ) Решите уравнение: 2sin(x+<span class="frac"><span class="num">π</span><span class="den">6</span></span>) − 2√3cos<sup>2</sup>x = cosx − 2√3' },
-            { id: 286, text: '56.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [−2,5π; −π]' },
-            { id: 287, text: '56.2 а) (ОБЗ) Решите уравнение: 2√3sin(x+<span class="frac"><span class="num">π</span><span class="den">6</span></span>) + 2sin<sup>2</sup>x = 3sinx + 2' },
-            { id: 288, text: '56.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [1,5π; 3π]' },
-            { id: 289, text: '57.1 а) (ОБЗ) Решите уравнение: √2sin(x+<span class="frac"><span class="num">π</span><span class="den">4</span></span>) + 2sin<sup>2</sup>x = cosx' },
-            { id: 290, text: '57.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [−2π; −<span class="frac"><span class="num">π</span><span class="den">2</span></span>]' },
-            { id: 291, text: '57.2 а) (ОБЗ) Решите уравнение: √2sin(x+<span class="frac"><span class="num">π</span><span class="den">4</span></span>) + 2sin<sup>2</sup>x = sinx + 2' },
-            { id: 292, text: '57.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [2π; <span class="frac"><span class="num">7π</span><span class="den">2</span></span>]' },
-            { id: 293, text: '58.1 а) (ОБЗ) Решите уравнение: 2sin(x+<span class="frac"><span class="num">π</span><span class="den">3</span></span>) + cos2x = √3cosx + 1' },
-            { id: 294, text: '58.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [−3π; −<span class="frac"><span class="num">3π</span><span class="den">2</span></span>]' },
-            { id: 295, text: '58.2 а) (ОБЗ) Решите уравнение: 2sin(x+<span class="frac"><span class="num">π</span><span class="den">3</span></span>) − √3cos2x = sinx + √3' },
-            { id: 296, text: '58.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [−2π; −<span class="frac"><span class="num">π</span><span class="den">2</span></span>]' },
-            { id: 297, text: '59.1 а) (ОБЗ) Решите уравнение: 2sin(2x+<span class="frac"><span class="num">π</span><span class="den">6</span></span>) + sinx = √3sin2x + 1' },
-            { id: 298, text: '59.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">7π</span><span class="den">2</span></span>; −2π]' },
-            { id: 299, text: '59.2 а) (ОБЗ) Решите уравнение: 2sin(2x+<span class="frac"><span class="num">π</span><span class="den">6</span></span>) − cosx = √3sin2x − 1' },
-            { id: 300, text: '59.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [<span class="frac"><span class="num">5π</span><span class="den">2</span></span>; 4π]' },            { id: 301, text: '60.1 а) Решите уравнение: 2log<sub>3</sub><sup>2</sup>(2cosx) − 5log<sub>3</sub>(2cosx) + 2 = 0' },
-            { id: 302, text: '60.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [π; 2,5π]' },
-            { id: 303, text: '60.2 а) Решите уравнение: 2log<sub>4</sub><sup>2</sup>(4sinx) − 5log<sub>4</sub>(4sinx) + 2 = 0' },
-            { id: 304, text: '60.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [−1,5π; 0]' },
-            { id: 305, text: '61.1 а) Решите уравнение: log<sub>6</sub>(2sin<sup>2</sup>x − 3sinx − 1) = 0' },
-            { id: 306, text: '61.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [π; 2,5π]' },
-            { id: 307, text: '61.2 а) Решите уравнение: log<sub>2</sub>(4sin<sup>2</sup>x + 12sinx + 6) = 0' },
-            { id: 308, text: '61.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [1,5π; 3π]' },
-            { id: 309, text: '62.1 а) Решите уравнение: log<sub>3</sub>(2cos<sup>2</sup>x − 7cosx − 3) = 0' },
-            { id: 310, text: '62.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">3π</span><span class="den">2</span></span>; <span class="frac"><span class="num">π</span><span class="den">2</span></span>]' },
-            { id: 311, text: '62.2 а) Решите уравнение: log<sub>7</sub>(2cos<sup>2</sup>x + 3cosx − 1) = 0' },
-            { id: 312, text: '62.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">7π</span><span class="den">2</span></span>; −2π]' },
-            { id: 313, text: '63.1 а) Решите уравнение: log<sub>4</sub>(sinx + sin2x + 16) = 2' },
-            { id: 314, text: '63.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [−4π; −<span class="frac"><span class="num">5π</span><span class="den">2</span></span>]' },
-            { id: 315, text: '63.2 а) Решите уравнение: log<sub>3</sub>(sinx − sin2x + 27) = 3' },
-            { id: 316, text: '63.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">7π</span><span class="den">2</span></span>; −2π]' },
-            { id: 317, text: '64.1 а) Решите уравнение: log<sub>2</sub>(cosx + sin2x + 8) = 3' },
-            { id: 318, text: '64.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [<span class="frac"><span class="num">3π</span><span class="den">2</span></span>; 3π]' },
-            { id: 319, text: '64.2 а) Решите уравнение: log<sub>5</sub>(cosx − sin2x + 25) = 2' },
-            { id: 320, text: '64.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [2π; <span class="frac"><span class="num">7π</span><span class="den">2</span></span>]' },
-            { id: 321, text: '65.1 а) Решите уравнение: 21<sup>−sinx</sup> = 3<sup>−sinx</sup>·7<sup>cosx</sup>' },
-            { id: 322, text: '65.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">3π</span><span class="den">2</span></span>; 0]' },
-            { id: 323, text: '65.2 а) Решите уравнение: 12<sup>sinx</sup> = 3<sup>sinx</sup>·4<sup>cosx</sup>' },
-            { id: 324, text: '65.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [2π; <span class="frac"><span class="num">7π</span><span class="den">2</span></span>]' },
-            { id: 325, text: '66.1 а) Решите уравнение: 20<sup>cosx</sup> = 4<sup>cosx</sup>·5<sup>−sinx</sup>' },
-            { id: 326, text: '66.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">9π</span><span class="den">2</span></span>; −3π]' },
-            { id: 327, text: '66.2 а) Решите уравнение: 15<sup>cosx</sup> = 3<sup>cosx</sup>·5<sup>sinx</sup>' },
-            { id: 328, text: '66.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [5π; <span class="frac"><span class="num">13π</span><span class="den">2</span></span>]' },
-            { id: 329, text: '67.1 а) Решите уравнение: 36<sup>sin2x</sup> = 6<sup>2sinx</sup>' },
-            { id: 330, text: '67.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">7π</span><span class="den">2</span></span>; −<span class="frac"><span class="num">5π</span><span class="den">2</span></span>]' },
-            { id: 331, text: '67.2 а) Решите уравнение: 7<sup>2cosx</sup> = 49<sup>sin2x</sup>' },
-            { id: 332, text: '67.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [π; <span class="frac"><span class="num">5π</span><span class="den">2</span></span>]' },
-            { id: 333, text: '68.1 а) Решите уравнение: (<span class="frac"><span class="num">1</span><span class="den">16</span></span>)<sup>sinx</sup> = 4<sup>2sin2x</sup>' },
-            { id: 334, text: '68.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [<span class="frac"><span class="num">3π</span><span class="den">2</span></span>; 3π]' },
-            { id: 335, text: '68.2 а) Решите уравнение: (<span class="frac"><span class="num">1</span><span class="den">81</span></span>)<sup>cosx</sup> = 9<sup>2sin2x</sup>' },
-            { id: 336, text: '68.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [−2π; −<span class="frac"><span class="num">π</span><span class="den">2</span></span>]' },
-            { id: 337, text: '69.1 а) (ОБЗ) Решите уравнение: 25<sup>√3cosx</sup> = (<span class="frac"><span class="num">1</span><span class="den">5</span></span>)<sup>2sin2x</sup>' },
-            { id: 338, text: '69.1 б) Укажите корни этого уравнения, принадлежащие отрезку [−3π; −<span class="frac"><span class="num">3π</span><span class="den">2</span></span>]' },
-            { id: 339, text: '69.2 а) (ОБЗ) Решите уравнение: 49<sup>sinx</sup> = (<span class="frac"><span class="num">1</span><span class="den">7</span></span>)<sup>−√2sin2x</sup>' },
-            { id: 340, text: '69.2 б) Укажите корни этого уравнения, принадлежащие отрезку [2π; <span class="frac"><span class="num">7π</span><span class="den">2</span></span>]' },
-            { id: 341, text: '70.1 а) (ОБЗ) Решите уравнение: (<span class="frac"><span class="num">1</span><span class="den">49</span></span>)<sup>sin(x+π)</sup> = 7<sup>2√3sin(<span class="frac"><span class="num">π</span><span class="den">2</span></span>−x)</sup>' },
-            { id: 342, text: '70.1 б) Укажите корни этого уравнения, принадлежащие отрезку [3π; <span class="frac"><span class="num">9π</span><span class="den">2</span></span>]' },
-            { id: 343, text: '70.2 а) (ОБЗ) Решите уравнение: (<span class="frac"><span class="num">1</span><span class="den">5</span></span>)<sup>2cos(π+x)</sup> = 25<sup>√3cos(<span class="frac"><span class="num">3π</span><span class="den">2</span></span>+x)</sup>' },
-            { id: 344, text: '70.2 б) Укажите корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">π</span><span class="den">2</span></span>; <span class="frac"><span class="num">5π</span><span class="den">2</span></span>]' },
-            { id: 345, text: '71.1 а) Решите уравнение: (36<sup>sinx</sup>)<sup>−cosx</sup> = 6<sup>sinx</sup>' },
-            { id: 346, text: '71.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [−<span class="frac"><span class="num">7π</span><span class="den">2</span></span>; −2π]' },
-            { id: 347, text: '71.2 а) Решите уравнение: (27<sup>cosx</sup>)<sup>sinx</sup> = 3<sup>1,5cosx</sup>' },
-            { id: 348, text: '71.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [−π; <span class="frac"><span class="num">π</span><span class="den">2</span></span>]' },
-            { id: 349, text: '72.1 а) Решите уравнение: (16<sup>sinx</sup>)<sup>cosx</sup> = 4<sup>√3sinx</sup>' },
-            { id: 350, text: '72.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [3π; <span class="frac"><span class="num">9π</span><span class="den">2</span></span>]' },            { id: 351, text: '72.2 а) Решите уравнение: (81<sup>sinx</sup>)<sup>cosx</sup> = 9<sup>−√3sinx</sup>' },
-            { id: 352, text: '72.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [−2π; −<span class="frac"><span class="num">π</span><span class="den">2</span></span>]' },
-            { id: 353, text: '72.3 а) Решите уравнение: (36<sup>sinx</sup>)<sup>cosx</sup> = 6<sup>√2sinx</sup>' },
-            { id: 354, text: '72.3 б) Найдите все корни этого уравнения, принадлежащие отрезку [2π; <span class="frac"><span class="num">7π</span><span class="den">2</span></span>]' },
-            { id: 355, text: '72.4 а) Решите уравнение: (25<sup>sinx</sup>)<sup>−cosx</sup> = 5<sup>√2sinx</sup>' },
-            { id: 356, text: '72.4 б) Найдите все корни этого уравнения, принадлежащие отрезку [<span class="frac"><span class="num">3π</span><span class="den">2</span></span>; 3π]' },
-            { id: 357, text: '73.1 а) (ОБЗ) Решите уравнение: 27·81<sup>sinx</sup> − 12·9<sup>sinx</sup> + 1 = 0' },
-            { id: 358, text: '73.1 б) Укажите корни этого уравнения, принадлежащие отрезку [<span class="frac"><span class="num">3π</span><span class="den">2</span></span>; 3π]' },
-            { id: 359, text: '73.2 а) (ОБЗ) Решите уравнение: 9·81<sup>cosx</sup> − 28·9<sup>cosx</sup> + 3 = 0' },
-            { id: 360, text: '73.2 б) Укажите корни этого уравнения, принадлежащие отрезку [<span class="frac"><span class="num">5π</span><span class="den">2</span></span>; 4π]' },
-            { id: 361, text: '74.1 а) (ОБЗ) Решите уравнение: 8·16<sup>sin<sup>2</sup>x</sup> − 2·4<sup>cos2x</sup> = 63' },
-            { id: 362, text: '74.1 б) Укажите корни этого уравнения, принадлежащие отрезку [<span class="frac"><span class="num">7π</span><span class="den">2</span></span>; 5π]' },
-            { id: 363, text: '74.2 а) (ОБЗ) Решите уравнение: 4·16<sup>sin<sup>2</sup>x</sup> − 6·4<sup>cos2x</sup> = 29' },
-            { id: 364, text: '74.2 б) Укажите корни этого уравнения, принадлежащие отрезку [<span class="frac"><span class="num">3π</span><span class="den">2</span></span>; 3π]' },
-            { id: 365, text: '75.1 а) Решите уравнение: 9<sup>cosx</sup> + 9<sup>−cosx</sup> = <span class="frac"><span class="num">10</span><span class="den">3</span></span>' },
-            { id: 366, text: '75.1 б) Укажите корни этого уравнения, принадлежащие отрезку [2π; <span class="frac"><span class="num">7π</span><span class="den">2</span></span>]' },
-            { id: 367, text: '75.2 а) Решите уравнение: 4<sup>cosx</sup> + 4<sup>−cosx</sup> = <span class="frac"><span class="num">5</span><span class="den">2</span></span>' },
-            { id: 368, text: '75.2 б) Укажите корни этого уравнения, принадлежащие отрезку [−3π; −<span class="frac"><span class="num">3π</span><span class="den">2</span></span>]' },
-            { id: 369, text: '76.1 а) Решите уравнение: 9<sup>sinx</sup> + 9<sup>−sinx</sup> = <span class="frac"><span class="num">10</span><span class="den">3</span></span>' },
-            { id: 370, text: '76.1 б) Укажите корни этого уравнения, принадлежащие отрезку [−3,5π; −2π]' },
-            { id: 371, text: '76.2 а) Решите уравнение: 4<sup>sinx</sup> + 4<sup>−sinx</sup> = <span class="frac"><span class="num">5</span><span class="den">2</span></span>' },
-            { id: 372, text: '76.2 б) Укажите корни этого уравнения, принадлежащие отрезку [2,5π; 4π]' },
-            { id: 373, text: '77.1 а) (ОБЗ) Решите уравнение: 16<sup>cosx</sup> + 16<sup>cos(π−x)</sup> = <span class="frac"><span class="num">17</span><span class="den">4</span></span>' },
-            { id: 374, text: '77.1 б) Укажите корни этого уравнения, принадлежащие отрезку [π; 2,5π]' },
-            { id: 375, text: '77.2 а) (ОБЗ) Решите уравнение: 16<sup>sinx</sup> + 16<sup>sin(x+π)</sup> = <span class="frac"><span class="num">17</span><span class="den">4</span></span>' },
-            { id: 376, text: '77.2 б) Укажите корни этого уравнения, принадлежащие отрезку [1,5π; 3π]' },
-            { id: 377, text: '78.1 а) (ОБЗ) Решите уравнение: log<sub>9</sub>(3<sup>2x</sup> + 5√2sinx − 6cos<sup>2</sup>x − 2) = x' },
-            { id: 378, text: '78.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [−2π; −<span class="frac"><span class="num">π</span><span class="den">2</span></span>]' },
-            { id: 379, text: '78.2 а) (ОБЗ) Решите уравнение: log<sub>25</sub>(5<sup>2x</sup> − 4√3cosx − 4sin<sup>2</sup>x − 5) = x' },
-            { id: 380, text: '78.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [<span class="frac"><span class="num">5π</span><span class="den">2</span></span>; 4π]' },
-            { id: 381, text: '79.1 а) (ОБЗ) Решите уравнение: <span class="frac"><span class="num">4<sup>sin2x</sup> − 2<sup>2√3sinx</sup></span><span class="den">√7sinx</span></span> = 0' },
-            { id: 382, text: '79.1 б) Найдите все его корни, принадлежащие отрезку [−<span class="frac"><span class="num">13π</span><span class="den">2</span></span>; −5π]' },
-            { id: 383, text: '79.2 а) (ОБЗ) Решите уравнение: <span class="frac"><span class="num">9<sup>sin2x</sup> − 3<sup>2√2sinx</sup></span><span class="den">√11sinx</span></span> = 0' },
-            { id: 384, text: '79.2 б) Найдите все его корни, принадлежащие отрезку [<span class="frac"><span class="num">7π</span><span class="den">2</span></span>; 5π]' },
-            { id: 385, text: '80.1 а) (ОБЗ) Решите уравнение: <span class="frac"><span class="num">log<sub>2</sub><sup>2</sup>(sinx) + log<sub>2</sub>(sinx)</span><span class="den">2cosx − √3</span></span> = 0' },
-            { id: 386, text: '80.1 б) Найдите все корни этого уравнения, принадлежащие отрезку [<span class="frac"><span class="num">π</span><span class="den">2</span></span>; 2π]' },
-            { id: 387, text: '80.2 а) (ОБЗ) Решите уравнение: <span class="frac"><span class="num">log<sub>2</sub><sup>2</sup>(sinx) + log<sub>2</sub>(sinx)</span><span class="den">2cosx + √3</span></span> = 0' },
-            { id: 388, text: '80.2 б) Найдите все корни этого уравнения, принадлежащие отрезку [0; <span class="frac"><span class="num">3π</span><span class="den">2</span></span>]' }
+            { id: 120, text: '20.4 б) Укажите корни этого уравнения, принадлежащие отрезку [−2π; −<span class="frac"><span class="num">π</span><span class="den">2</span></span>]' }
         ];
 
         var completedTasks = {};
@@ -488,6 +275,7 @@
                 if (stored) { completedTasks = JSON.parse(stored); }
             } catch (e) { completedTasks = {}; }
         }
+
         function saveCompletedTasks() {
             try { localStorage.setItem('egeTask13Completed', JSON.stringify(completedTasks)); }
             catch (e) {}
@@ -504,8 +292,7 @@
         function updateCounter() {
             var counter = document.getElementById('unsolvedCounter');
             var unsolved = getUnsolvedCount();
-            counter.textContent = 'Не решено: ' + unsolved + ' из ' + tasks.length;
-            if (unsolved === 0) {
+            counter.textContent = 'Не решено: ' + unsolved + ' из ' + tasks.length;            if (unsolved === 0) {
                 counter.style.background = '#e0f0f0';
                 counter.style.color = '#0d4f4f';
             } else {
@@ -528,15 +315,21 @@
                 });
             }
 
-            for (var i = 0; i < displayTasks.length; i++) {
-                var task = displayTasks[i];
-                var isCompleted = completedTasks[task.id];
+            // Группируем по парам (а и б)
+            for (var i = 0; i < displayTasks.length; i += 2) {
+                var taskA = displayTasks[i];
+                var taskB = (i + 1 < displayTasks.length) ? displayTasks[i + 1] : null;
+                
+                var isCompletedA = completedTasks[taskA.id];
+                var isCompletedB = taskB ? completedTasks[taskB.id] : false;
+                var isCompleted = isCompletedA && isCompletedB;
 
                 var block = document.createElement('div');
                 block.className = 'task-block';
 
                 var header = document.createElement('div');
                 header.className = 'task-header';
+
                 var title = document.createElement('div');
                 title.className = 'task-title';
                 title.textContent = 'Решите задание';
@@ -548,18 +341,31 @@
                 header.appendChild(title);
                 header.appendChild(status);
                 block.appendChild(header);
+                // Часть а)
+                var textA = document.createElement('div');
+                textA.className = 'task-text';
+                textA.innerHTML = taskA.text;
+                block.appendChild(textA);
 
-                var text = document.createElement('div');
-                text.className = 'task-text';
-                text.innerHTML = task.text;
-                block.appendChild(text);
+                // Разделитель если есть часть б)
+                if (taskB) {
+                    var divider = document.createElement('hr');
+                    divider.className = 'subtask-divider';
+                    block.appendChild(divider);
+
+                    // Часть б)
+                    var textB = document.createElement('div');
+                    textB.className = 'task-text';
+                    textB.innerHTML = taskB.text;
+                    block.appendChild(textB);
+                }
 
                 var btnSolved = document.createElement('button');
                 btnSolved.className = 'btn-solved' + (isCompleted ? ' marked' : '');
                 btnSolved.textContent = isCompleted ? '✓ решено' : 'решено';
-                btnSolved.onclick = function(taskId) {
-                    return function() { toggleSolved(taskId); };
-                }(task.id);
+                btnSolved.onclick = function(idA, idB) {
+                    return function() { toggleSolved(idA, idB); };
+                }(taskA.id, taskB ? taskB.id : null);
                 block.appendChild(btnSolved);
 
                 container.appendChild(block);
@@ -568,16 +374,22 @@
             updateCounter();
         }
 
-        function toggleSolved(taskId) {
-            if (completedTasks[taskId]) {
-                delete completedTasks[taskId];
+        function toggleSolved(idA, idB) {
+            if (completedTasks[idA]) {
+                delete completedTasks[idA];
             } else {
-                completedTasks[taskId] = true;
+                completedTasks[idA] = true;
+            }
+            if (idB) {
+                if (completedTasks[idB]) {
+                    delete completedTasks[idB];
+                } else {
+                    completedTasks[idB] = true;
+                }
             }
             saveCompletedTasks();
             renderTasks();
         }
-
         function toggleSort() {
             sortUnsolvedFirst = !sortUnsolvedFirst;
             document.getElementById('sortArrow').textContent = sortUnsolvedFirst ? '↑' : '↓';
@@ -586,7 +398,8 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            loadCompletedTasks();            renderTasks();
+            loadCompletedTasks();
+            renderTasks();
         });
     </script>
 </body>
