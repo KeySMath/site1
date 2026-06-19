@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ЕГЭ Математика - Задание 2</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #c5d5d4;
+            color: #1a1a1a;
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+        .header {
+            background-color: #c5d5d4;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #a8b8b7;
+            position: sticky; top: 0; z-index: 100;
+        }
+        .header h1 { font-size: 16px; color: #0d4f4f; font-weight: 400; flex: 1; }
+        .controls {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 15px; background: white;
+            border-bottom: 1px solid #a8b8b7;
+            position: sticky; top: 45px; z-index: 99;
+        }
+        .unsolved-counter {
+            background: #ffe0e0; color: #c0392b;
+            padding: 6px 12px; border-radius: 5px; font-size: 14px;
+        }
+        .sort-btn {
+            background: white; border: 1px solid #0d4f4f; color: #0d4f4f;
+            padding: 8px 16px; border-radius: 5px; cursor: pointer; font-size: 14px;
+        }
+        .sort-btn:hover { background: #0d4f4f; color: white; }
+        .tasks-container { max-width: 900px; margin: 0 auto; padding: 15px; }
+        .task-block {
+            background: white; border-radius: 10px; padding: 20px;
+            margin-bottom: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        .task-title {
+            font-size: 17px; color: #0a0a0a; font-weight: 400;
+            margin-bottom: 15px; background: #B0E0E6;
+            padding: 10px 15px; border-radius: 5px; display: inline-block;
+        }
+        .task-header {            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 15px; flex-wrap: wrap; gap: 10px;
+        }
+        .task-status { font-size: 13px; padding: 4px 10px; border-radius: 4px; }
+        .status-pending { background: #ffe0e0; color: #c0392b; }
+        .status-solved { background: #e0f0f0; color: #0d4f4f; }
+        .task-text {
+            font-size: 16px; line-height: 2; color: #0a0a0a;
+            margin-bottom: 15px; font-family: 'Times New Roman', serif;
+        }
+        .figure-container {
+            text-align: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: #fafafa;
+            border-radius: 5px;
+        }
+        .figure-container svg {
+            max-width: 100%;
+            height: auto;
+        }
+        .answer-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #0d4f4f;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            font-family: inherit;
+        }
+        .answer-input:focus {
+            outline: none;
+            border-color: #0d4f4f;
+            box-shadow: 0 0 0 3px rgba(13, 79, 79, 0.1);
+        }
+        .answer-input.correct {
+            border-color: #27ae60;
+            background: #e8f8f5;
+        }
+        .answer-input.wrong {
+            border-color: #c0392b;
+            background: #fde8e8;
+        }
+        .btn-check {
+            background: white;
+            color: #0d4f4f;
+            border: 1px solid #0d4f4f;
+            padding: 9px 20px;
+            border-radius: 5px;
+            cursor: pointer;            font-size: 14px;
+            margin-right: 10px;
+        }
+        .btn-check:hover { background: #0d4f4f; color: white; }
+        .btn-check:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-solved {
+            background: white;
+            color: #0a0a0a;
+            border: 1px solid #0d4f4f;
+            padding: 9px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn-solved:hover { background: #0d4f4f; color: white; }
+        .btn-solved.marked { background: #0d4f4f; color: white; }
+        .message {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            display: none;
+            font-weight: 500;
+        }
+        .message.show { display: block; }
+        .message.success { background: #e8f8f5; color: #27ae60; border: 1px solid #27ae60; }
+        .message.error { background: #fde8e8; color: #c0392b; border: 1px solid #c0392b; }
+        
+        @media (min-width: 768px) {
+            .header { padding: 15px 25px; }
+            .header h1 { font-size: 18px; }
+            .controls { padding: 12px 25px; }
+            .tasks-container { padding: 25px; }
+            .task-block { padding: 25px 30px; }
+            .task-text { font-size: 17px; }
+        }
+        @media (max-width: 480px) {
+            .header { padding: 10px 12px; }
+            .header h1 { font-size: 14px; }
+            .controls { padding: 8px 12px; }
+            .tasks-container { padding: 12px; }
+            .task-block { padding: 15px; }
+            .task-text { font-size: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header"><h1>ЗАДАНИЕ 2 — Векторы</h1></div>
+    <div class="controls">
+        <div class="unsolved-counter" id="unsolvedCounter">Не решено: 0</div>
+        <button class="sort-btn" onclick="toggleSort()"><span id="sortArrow">↓</span> <span id="sortText">Сортировка</span></button>    </div>
+    <div class="tasks-container" id="tasksContainer"></div>
+
+    <script>
+        var figures = {};
+        
+        // Рисунок с векторами на координатной сетке
+        figures.vectorGrid1 = '<svg width="240" height="240" viewBox="0 0 240 240"><defs><pattern id="grid1" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#d0d0d0" stroke-width="0.5"/></pattern></defs><rect width="240" height="240" fill="url(#grid1)"/><line x1="120" y1="0" x2="120" y2="240" stroke="black" stroke-width="1.5"/><line x1="0" y1="120" x2="240" y2="120" stroke="black" stroke-width="1.5"/><line x1="120" y1="120" x2="160" y2="80" stroke="#0d4f4f" stroke-width="2.5" marker-end="url(#arrowhead)"/><line x1="120" y1="120" x2="140" y2="180" stroke="#c0392b" stroke-width="2.5" marker-end="url(#arrowhead)"/><defs><marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#000"/></marker></defs><text x="165" y="75" font-size="14" font-family="Times New Roman">a</text><text x="145" y="195" font-size="14" font-family="Times New Roman">b</text><text x="225" y="115" font-size="12" font-family="Times New Roman">x</text><text x="125" y="15" font-size="12" font-family="Times New Roman">y</text></svg>';
+        
+        figures.vectorGrid2 = '<svg width="240" height="240" viewBox="0 0 240 240"><defs><pattern id="grid2" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#d0d0d0" stroke-width="0.5"/></pattern></defs><rect width="240" height="240" fill="url(#grid2)"/><line x1="120" y1="0" x2="120" y2="240" stroke="black" stroke-width="1.5"/><line x1="0" y1="120" x2="240" y2="120" stroke="black" stroke-width="1.5"/><line x1="120" y1="120" x2="180" y2="100" stroke="#0d4f4f" stroke-width="2.5" marker-end="url(#arrowhead2)"/><line x1="120" y1="120" x2="100" y2="60" stroke="#c0392b" stroke-width="2.5" marker-end="url(#arrowhead2)"/><defs><marker id="arrowhead2" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#000"/></marker></defs><text x="185" y="95" font-size="14" font-family="Times New Roman">a</text><text x="85" y="55" font-size="14" font-family="Times New Roman">b</text><text x="225" y="115" font-size="12" font-family="Times New Roman">x</text><text x="125" y="15" font-size="12" font-family="Times New Roman">y</text></svg>';
+        
+        figures.vectorGrid3 = '<svg width="240" height="240" viewBox="0 0 240 240"><defs><pattern id="grid3" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#d0d0d0" stroke-width="0.5"/></pattern></defs><rect width="240" height="240" fill="url(#grid3)"/><line x1="120" y1="0" x2="120" y2="240" stroke="black" stroke-width="1.5"/><line x1="0" y1="120" x2="240" y2="120" stroke="black" stroke-width="1.5"/><line x1="120" y1="120" x2="100" y2="60" stroke="#0d4f4f" stroke-width="2.5" marker-end="url(#arrowhead3)"/><line x1="120" y1="120" x2="160" y2="100" stroke="#c0392b" stroke-width="2.5" marker-end="url(#arrowhead3)"/><line x1="120" y1="120" x2="140" y2="180" stroke="#27ae60" stroke-width="2.5" marker-end="url(#arrowhead3)"/><defs><marker id="arrowhead3" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#000"/></marker></defs><text x="85" y="55" font-size="14" font-family="Times New Roman">a</text><text x="165" y="95" font-size="14" font-family="Times New Roman">b</text><text x="145" y="195" font-size="14" font-family="Times New Roman">c</text><text x="225" y="115" font-size="12" font-family="Times New Roman">x</text><text x="125" y="15" font-size="12" font-family="Times New Roman">y</text></svg>';
+        
+        figures.vectorGrid4 = '<svg width="240" height="240" viewBox="0 0 240 240"><defs><pattern id="grid4" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#d0d0d0" stroke-width="0.5"/></pattern></defs><rect width="240" height="240" fill="url(#grid4)"/><line x1="120" y1="0" x2="120" y2="240" stroke="black" stroke-width="1.5"/><line x1="0" y1="120" x2="240" y2="120" stroke="black" stroke-width="1.5"/><line x1="120" y1="120" x2="180" y2="140" stroke="#0d4f4f" stroke-width="2.5" marker-end="url(#arrowhead4)"/><line x1="120" y1="120" x2="100" y2="80" stroke="#c0392b" stroke-width="2.5" marker-end="url(#arrowhead4)"/><line x1="120" y1="120" x2="80" y2="180" stroke="#27ae60" stroke-width="2.5" marker-end="url(#arrowhead4)"/><defs><marker id="arrowhead4" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#000"/></marker></defs><text x="185" y="145" font-size="14" font-family="Times New Roman">a</text><text x="85" y="75" font-size="14" font-family="Times New Roman">b</text><text x="65" y="195" font-size="14" font-family="Times New Roman">c</text><text x="225" y="115" font-size="12" font-family="Times New Roman">x</text><text x="125" y="15" font-size="12" font-family="Times New Roman">y</text></svg>';
+
+        figures.angleVectors1 = '<svg width="240" height="180" viewBox="0 0 240 180"><line x1="60" y1="140" x2="180" y2="140" stroke="#0d4f4f" stroke-width="2.5" marker-end="url(#arrowhead5)"/><line x1="60" y1="140" x2="160" y2="60" stroke="#c0392b" stroke-width="2.5" marker-end="url(#arrowhead5)"/><defs><marker id="arrowhead5" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#000"/></marker></defs><text x="185" y="145" font-size="14" font-family="Times New Roman">a</text><text x="165" y="55" font-size="14" font-family="Times New Roman">b</text><text x="70" y="130" font-size="14" font-family="Times New Roman">α</text></svg>';
+        
+        figures.angleVectors2 = '<svg width="240" height="180" viewBox="0 0 240 180"><line x1="80" y1="140" x2="200" y2="120" stroke="#0d4f4f" stroke-width="2.5" marker-end="url(#arrowhead6)"/><line x1="80" y1="140" x2="100" y2="60" stroke="#c0392b" stroke-width="2.5" marker-end="url(#arrowhead6)"/><defs><marker id="arrowhead6" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#000"/></marker></defs><text x="205" y="125" font-size="14" font-family="Times New Roman">a</text><text x="85" y="55" font-size="14" font-family="Times New Roman">b</text><text x="90" y="130" font-size="14" font-family="Times New Roman">α</text></svg>';
+
+        var tasks = [];
+        
+        // Блок 1. ФИПИ - I) Действия над векторами. Длина вектора
+        tasks.push({ id: 1, text: '1. Даны векторы a(1; 1) и b(0; 7). Найдите длину вектора 8a + b.', answer: '10', figure: null });
+        tasks.push({ id: 2, text: '2. Даны векторы a(2; 0) и b(1; 4). Найдите длину вектора a + 3b.', answer: '13', figure: null });
+        tasks.push({ id: 3, text: '3. Даны векторы a(25; 0) и b(−1; 5). Найдите длину вектора a − 4b.', answer: '29', figure: null });
+        tasks.push({ id: 4, text: '4. Даны векторы a(31; 0) и b(−1; 1). Найдите длину вектора −24a + b.', answer: '25', figure: null });
+        tasks.push({ id: 5, text: '5. На координатной плоскости изображены векторы a и b, координатами которых являются целые числа. Найдите длину вектора a + 3b.', answer: '10', figure: 'vectorGrid1' });
+        tasks.push({ id: 6, text: '6. На координатной плоскости изображены векторы a и b, координатами которых являются целые числа. Найдите длину вектора a + 4b.', answer: '10', figure: 'vectorGrid2' });
+        
+        // II) Скалярное произведение
+        tasks.push({ id: 7, text: '7. Длины векторов a и b равны 3 и 5, а угол между ними равен 60°. Найдите скалярное произведение a·b.', answer: '7.5', figure: 'angleVectors1' });
+        tasks.push({ id: 8, text: '8. Длины векторов a и b равны 3 и 7, а угол между ними равен 60°. Найдите скалярное произведение a·b.', answer: '10.5', figure: 'angleVectors1' });
+        tasks.push({ id: 9, text: '9. Даны векторы a(−13; 4) и b(−6; 1). Найдите скалярное произведение a·b.', answer: '82', figure: null });
+        tasks.push({ id: 10, text: '10. Даны векторы a(−14; 2) и b(−5; 8). Найдите скалярное произведение a·b.', answer: '86', figure: null });
+        tasks.push({ id: 11, text: '11. Даны векторы a(−3; 5) и b(1; 13). Найдите скалярное произведение a·b.', answer: '62', figure: null });
+        tasks.push({ id: 12, text: '12. Даны векторы a(−5; 7) и b(14; 1). Найдите скалярное произведение a·b.', answer: '−63', figure: null });
+        tasks.push({ id: 13, text: '13. На координатной плоскости изображены векторы a и b, координатами которых являются целые числа. Найдите скалярное произведение a·b.', answer: '−8', figure: 'vectorGrid1' });
+        tasks.push({ id: 14, text: '14. На координатной плоскости изображены векторы a и b, координатами которых являются целые числа. Найдите скалярное произведение a·b.', answer: '16', figure: 'vectorGrid2' });
+
+        // Блок 2. Типовые экзаменационные варианты - I) Действия над векторами. Длина вектора
+        tasks.push({ id: 15, text: '15. Найдите длину вектора a(−6; 8).', answer: '10', figure: null });
+        tasks.push({ id: 16, text: '16. Найдите длину вектора a(−12; 5).', answer: '13', figure: null });
+        tasks.push({ id: 17, text: '17. Даны векторы a(−4; 5) и b(−5; 7). Найдите длину вектора a + b.', answer: '13', figure: null });
+        tasks.push({ id: 18, text: '18. Даны векторы a(−9; 6) и b(1; 9). Найдите длину вектора a − b.', answer: '17', figure: null });
+        tasks.push({ id: 19, text: '19. Даны векторы a(−3; 4) и b(−9; 4). Найдите длину вектора 1,1a − 0,6b.', answer: '5', figure: null });
+        tasks.push({ id: 20, text: '20. Даны векторы a(5; 6) и b(16; 12). Найдите длину вектора 1,4a − 0,5b.', answer: '2', figure: null });
+        tasks.push({ id: 21, text: '21. Даны векторы a(−1; 9), b(−7; 2) и c(14; 8). Найдите длину вектора a + b + c.', answer: '13', figure: null });
+        tasks.push({ id: 22, text: '22. Даны векторы a(12; 10), b(−7; 11) и c(−2; −3). Найдите длину вектора a − b − c.', answer: '25', figure: null });
+        tasks.push({ id: 23, text: '23. Даны векторы a(−2; 4), b(4; 5) и c(−1; 2). Найдите длину вектора 2a − 3b + c.', answer: '25', figure: null });
+        tasks.push({ id: 24, text: '24. Даны векторы a(3; 1), b(−5; 6) и c(−2; 4). Найдите длину вектора 4a − b + c.', answer: '25', figure: null });        tasks.push({ id: 25, text: '25. На координатной плоскости изображены векторы a, b и c. Найдите длину вектора a − b + c.', answer: '5', figure: 'vectorGrid3' });
+        tasks.push({ id: 26, text: '26. На координатной плоскости изображены векторы a, b и c. Найдите длину вектора −a + b + c.', answer: '5', figure: 'vectorGrid4' });
+        tasks.push({ id: 27, text: '27. На координатной плоскости изображены векторы a, b и c. Найдите длину вектора 7a − 3b + 4c.', answer: '25', figure: 'vectorGrid3' });
+        tasks.push({ id: 28, text: '28. На координатной плоскости изображены векторы a, b и c. Найдите длину вектора −3a + 4b − 5c.', answer: '25', figure: 'vectorGrid4' });
+        tasks.push({ id: 29, text: '29. На координатной плоскости изображены векторы a, b и c. Найдите длину вектора −1,3a + 3,2b − c.', answer: '10', figure: 'vectorGrid3' });
+        tasks.push({ id: 30, text: '30. На координатной плоскости изображены векторы a, b и c. Найдите длину вектора −2,7a + 0,4b − c.', answer: '10', figure: 'vectorGrid4' });
+
+        // II) Скалярное произведение
+        tasks.push({ id: 31, text: '31. Длины векторов a и b равны 2√3 и 7, а угол между ними равен 30°. Найдите скалярное произведение a·b.', answer: '21', figure: 'angleVectors1' });
+        tasks.push({ id: 32, text: '32. Длины векторов a и b равны 3√2 и 6, а угол между ними равен 45°. Найдите скалярное произведение a·b.', answer: '18', figure: 'angleVectors2' });
+        tasks.push({ id: 33, text: '33. Даны векторы a(−0; 4), b(7; 5) и c(−4; 8). Найдите значение выражения (a + b)·c.', answer: '44', figure: null });
+        tasks.push({ id: 34, text: '34. Даны векторы a(1; 9), b(−6; 0) и c(−10; 2). Найдите значение выражения (a − b)·c.', answer: '−36', figure: null });
+        tasks.push({ id: 35, text: '35. Найдите скалярное произведение a·b.', answer: '−8', figure: 'angleVectors1' });
+        tasks.push({ id: 36, text: '36. Найдите скалярное произведение a·b.', answer: '16', figure: 'angleVectors2' });
+        tasks.push({ id: 37, text: '37. Найдите скалярное произведение a·b.', answer: '−12', figure: 'angleVectors1' });
+        tasks.push({ id: 38, text: '38. Найдите скалярное произведение a·b.', answer: '24', figure: 'angleVectors2' });
+        tasks.push({ id: 39, text: '39. На координатной плоскости изображены векторы a, b и c. Найдите значение выражения (a − b)·c.', answer: '−20', figure: 'vectorGrid3' });
+        tasks.push({ id: 40, text: '40. На координатной плоскости изображены векторы a, b и c. Найдите значение выражения (a + b)·c.', answer: '20', figure: 'vectorGrid4' });
+        tasks.push({ id: 41, text: '41. На координатной плоскости изображены векторы a и b. Найдите скалярное произведение 2a и b.', answer: '−16', figure: 'angleVectors1' });
+        tasks.push({ id: 42, text: '42. На координатной плоскости изображены векторы a и b. Найдите скалярное произведение a и 2b.', answer: '32', figure: 'angleVectors2' });
+
+        // III) Косинус угла между векторами
+        tasks.push({ id: 43, text: '43. Даны векторы a(9; 3) и b(2; 6). Найдите косинус угла между ними.', answer: '0.6', figure: null });
+        tasks.push({ id: 44, text: '44. Даны векторы a(6; 6) и b(1; 7). Найдите косинус угла между ними.', answer: '0.8', figure: null });
+        tasks.push({ id: 45, text: '45. Даны векторы a(−4; 8) и b(2; 4). Найдите cos α между векторами a и b.', answer: '0.4', figure: null });
+        tasks.push({ id: 46, text: '46. Даны векторы a(−7; 1) и b(−5; 5). Найдите cos α между векторами a и b.', answer: '0.8', figure: null });
+        tasks.push({ id: 47, text: '47. На координатной плоскости изображены векторы a и b. Найдите косинус угла между ними.', answer: '0.6', figure: 'angleVectors1' });
+        tasks.push({ id: 48, text: '48. На координатной плоскости изображены векторы a и b. Найдите косинус угла между ними.', answer: '0.8', figure: 'angleVectors2' });
+        tasks.push({ id: 49, text: '49. На координатной плоскости изображены векторы a и b. Найдите cos α между векторами a и b.', answer: '0.4', figure: 'angleVectors1' });
+        tasks.push({ id: 50, text: '50. На координатной плоскости изображены векторы a и b. Найдите cos α между векторами a и b.', answer: '0.8', figure: 'angleVectors2' });
+
+        var completedTasks = {};
+        var sortUnsolvedFirst = false;
+
+        function loadCompletedTasks() {
+            try {
+                var stored = localStorage.getItem('egeTask2Completed');
+                if (stored) { completedTasks = JSON.parse(stored); }
+            } catch (e) { completedTasks = {}; }
+        }
+
+        function saveCompletedTasks() {
+            try { localStorage.setItem('egeTask2Completed', JSON.stringify(completedTasks)); }
+            catch (e) {}
+        }
+
+        function getUnsolvedCount() {
+            var count = 0;
+            for (var i = 0; i < tasks.length; i++) {
+                if (!completedTasks[tasks[i].id]) { count++; }            }
+            return count;
+        }
+
+        function updateCounter() {
+            var counter = document.getElementById('unsolvedCounter');
+            var unsolved = getUnsolvedCount();
+            counter.textContent = 'Не решено: ' + unsolved + ' из ' + tasks.length;
+            if (unsolved === 0) {
+                counter.style.background = '#e0f0f0';
+                counter.style.color = '#0d4f4f';
+            } else {
+                counter.style.background = '#ffe0e0';
+                counter.style.color = '#c0392b';
+            }
+        }
+
+        function renderTasks() {
+            var container = document.getElementById('tasksContainer');
+            container.innerHTML = '';
+
+            var displayTasks = tasks.slice();
+            if (sortUnsolvedFirst) {
+                displayTasks.sort(function(a, b) {
+                    var aC = completedTasks[a.id] ? 1 : 0;
+                    var bC = completedTasks[b.id] ? 1 : 0;
+                    if (aC === bC) return a.id - b.id;
+                    return aC - bC;
+                });
+            }
+
+            for (var i = 0; i < displayTasks.length; i++) {
+                var task = displayTasks[i];
+                var isCompleted = completedTasks[task.id];
+
+                var block = document.createElement('div');
+                block.className = 'task-block';
+
+                var header = document.createElement('div');
+                header.className = 'task-header';
+
+                var title = document.createElement('div');
+                title.className = 'task-title';
+                title.textContent = 'Решите задание';
+
+                var status = document.createElement('div');
+                status.className = 'task-status ' + (isCompleted ? 'status-solved' : 'status-pending');
+                status.textContent = isCompleted ? 'решено' : 'не решено';
+
+                header.appendChild(title);                header.appendChild(status);
+                block.appendChild(header);
+
+                if (task.figure && figures[task.figure]) {
+                    var figureDiv = document.createElement('div');
+                    figureDiv.className = 'figure-container';
+                    figureDiv.innerHTML = figures[task.figure];
+                    block.appendChild(figureDiv);
+                }
+
+                var text = document.createElement('div');
+                text.className = 'task-text';
+                text.innerHTML = task.text;
+                block.appendChild(text);
+
+                var input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'answer-input';
+                input.placeholder = 'Введите ответ...';
+                input.id = 'input-' + task.id;
+                input.disabled = isCompleted;
+                if (isCompleted) {
+                    input.value = task.answer;
+                    input.className = 'answer-input correct';
+                }
+                block.appendChild(input);
+
+                var message = document.createElement('div');
+                message.className = 'message';
+                message.id = 'message-' + task.id;
+                block.appendChild(message);
+
+                var btnContainer = document.createElement('div');
+                btnContainer.style.marginTop = '10px';
+
+                var btnCheck = document.createElement('button');
+                btnCheck.className = 'btn-check';
+                btnCheck.textContent = 'Проверить';
+                btnCheck.id = 'btn-check-' + task.id;
+                btnCheck.disabled = isCompleted;
+                btnCheck.onclick = function(taskId) {
+                    return function() { checkAnswer(taskId); };
+                }(task.id);
+                btnContainer.appendChild(btnCheck);
+
+                var btnSolved = document.createElement('button');
+                btnSolved.className = 'btn-solved' + (isCompleted ? ' marked' : '');
+                btnSolved.textContent = isCompleted ? '✓ решено' : 'решено';
+                btnSolved.onclick = function(taskId) {
+                    return function() { toggleSolved(taskId); };                }(task.id);
+                btnContainer.appendChild(btnSolved);
+
+                block.appendChild(btnContainer);
+                container.appendChild(block);
+            }
+
+            updateCounter();
+        }
+
+        function checkAnswer(taskId) {
+            var task = null;
+            for (var i = 0; i < tasks.length; i++) {
+                if (tasks[i].id === taskId) { task = tasks[i]; break; }
+            }
+            if (!task) return;
+
+            var input = document.getElementById('input-' + taskId);
+            var message = document.getElementById('message-' + taskId);
+            var btnCheck = document.getElementById('btn-check-' + taskId);
+            
+            var userAnswer = input.value.trim().toLowerCase().replace(/\s/g, '');
+            var correctAnswer = task.answer.toLowerCase().replace(/\s/g, '');
+
+            if (!userAnswer) {
+                message.textContent = 'Введите ответ!';
+                message.className = 'message error show';
+                return;
+            }
+
+            if (userAnswer === correctAnswer) {
+                input.className = 'answer-input correct';
+                message.textContent = '✓ Правильно! Задание отмечено как решённое.';
+                message.className = 'message success show';
+                input.disabled = true;
+                btnCheck.disabled = true;
+                
+                if (!completedTasks[taskId]) {
+                    completedTasks[taskId] = true;
+                    saveCompletedTasks();
+                    renderTasks();
+                }
+            } else {
+                input.className = 'answer-input wrong';
+                message.textContent = '✗ Неправильно. Попробуйте ещё раз.';
+                message.className = 'message error show';
+                setTimeout(function() {
+                    input.className = 'answer-input';
+                    message.classList.remove('show');
+                }, 2000);            }
+        }
+
+        function toggleSolved(taskId) {
+            if (completedTasks[taskId]) {
+                delete completedTasks[taskId];
+            } else {
+                completedTasks[taskId] = true;
+            }
+            saveCompletedTasks();
+            renderTasks();
+        }
+
+        function toggleSort() {
+            sortUnsolvedFirst = !sortUnsolvedFirst;
+            document.getElementById('sortArrow').textContent = sortUnsolvedFirst ? '↑' : '↓';
+            document.getElementById('sortText').textContent = sortUnsolvedFirst ? 'Сначала не решённые' : 'Сортировка';
+            renderTasks();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCompletedTasks();
+            renderTasks();
+            
+            document.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    var activeInput = document.activeElement;
+                    if (activeInput && activeInput.classList.contains('answer-input')) {
+                        var taskId = parseInt(activeInput.id.replace('input-', ''));
+                        checkAnswer(taskId);
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
