@@ -149,176 +149,160 @@
     <div class="tasks-container" id="tasksContainer"></div>
 
     <script>
-        // Улучшенные SVG рисунки для разных типов задач
+        // Улучшенные SVG рисунки
         const figures = {
-            // Равнобедренный треугольник (1-12)
-            isosceles: `<svg width="220" height="180" viewBox="0 0 220 180">
-                <polygon points="110,25 50,155 170,155" fill="none" stroke="#000" stroke-width="1.5"/>
-                <text x="105" y="20" font-size="16" font-family="Times New Roman">C</text>
-                <text x="40" y="175" font-size="16" font-family="Times New Roman">A</text>
-                <text x="175" y="175" font-size="16" font-family="Times New Roman">B</text>
+            isosceles: `<svg width="200" height="160" viewBox="0 0 200 160">
+                <polygon points="100,20 40,140 160,140" fill="none" stroke="black" stroke-width="1.5"/>
+                <text x="95" y="15" font-size="14" font-family="Times New Roman">C</text>
+                <text x="30" y="158" font-size="14" font-family="Times New Roman">A</text>
+                <text x="165" y="158" font-size="14" font-family="Times New Roman">B</text>
             </svg>`,
             
-            // Прямоугольный треугольник с медианой (13-34)
-            rightTriangleMedian: `<svg width="220" height="180" viewBox="0 0 220 180">
-                <polygon points="50,155 170,155 170,25" fill="none" stroke="#000" stroke-width="1.5"/>
-                <line x1="170" y1="25" x2="110" y2="155" stroke="#000" stroke-width="1" stroke-dasharray="3,2"/>
-                <line x1="170" y1="25" x2="140" y2="90" stroke="#000" stroke-width="1" stroke-dasharray="3,2"/>
-                <text x="40" y="175" font-size="16" font-family="Times New Roman">A</text>
-                <text x="175" y="175" font-size="16" font-family="Times New Roman">B</text>
-                <text x="175" y="20" font-size="16" font-family="Times New Roman">C</text>
-                <text x="105" y="175" font-size="14" font-family="Times New Roman">M</text>
-                <text x="145" y="85" font-size="14" font-family="Times New Roman">D</text>
-                <rect x="160" y="145" width="10" height="10" fill="none" stroke="#000" stroke-width="1"/>
+            rightTriangleMedian: `<svg width="200" height="160" viewBox="0 0 200 160">
+                <polygon points="40,140 160,140 160,20" fill="none" stroke="black" stroke-width="1.5"/>
+                <line x1="160" y1="20" x2="100" y2="140" stroke="black" stroke-width="1" stroke-dasharray="3,2"/>
+                <line x1="160" y1="20" x2="130" y2="80" stroke="black" stroke-width="1" stroke-dasharray="3,2"/>
+                <text x="30" y="158" font-size="14" font-family="Times New Roman">A</text>
+                <text x="165" y="158" font-size="14" font-family="Times New Roman">B</text>
+                <text x="165" y="15" font-size="14" font-family="Times New Roman">C</text>
+                <text x="95" y="158" font-size="12" font-family="Times New Roman">M</text>
+                <text x="135" y="75" font-size="12" font-family="Times New Roman">D</text>
+                <rect x="150" y="130" width="10" height="10" fill="none" stroke="black" stroke-width="1"/>
             </svg>`,
             
-            // Треугольник с биссектрисами и высотами (35-46)
-            triangleBisector: `<svg width="220" height="180" viewBox="0 0 220 180">
-                <polygon points="110,25 50,155 170,155" fill="none" stroke="#000" stroke-width="1.5"/>
-                <line x1="110" y1="25" x2="130" y2="155" stroke="#000" stroke-width="1" stroke-dasharray="3,2"/>
-                <line x1="50" y1="155" x2="140" y2="85" stroke="#000" stroke-width="1" stroke-dasharray="3,2"/>
-                <text x="105" y="20" font-size="16" font-family="Times New Roman">A</text>
-                <text x="40" y="175" font-size="16" font-family="Times New Roman">B</text>
-                <text x="175" y="175" font-size="16" font-family="Times New Roman">C</text>
-                <text x="135" y="175" font-size="14" font-family="Times New Roman">D</text>
-                <text x="145" y="80" font-size="14" font-family="Times New Roman">E</text>
-                <text x="120" y="110" font-size="14" font-family="Times New Roman">O</text>
+            triangleBisector: `<svg width="200" height="160" viewBox="0 0 200 160">
+                <polygon points="100,20 40,140 160,140" fill="none" stroke="black" stroke-width="1.5"/>
+                <line x1="100" y1="20" x2="120" y2="140" stroke="black" stroke-width="1" stroke-dasharray="3,2"/>
+                <line x1="40" y1="140" x2="130" y2="70" stroke="black" stroke-width="1" stroke-dasharray="3,2"/>
+                <text x="95" y="15" font-size="14" font-family="Times New Roman">A</text>
+                <text x="30" y="158" font-size="14" font-family="Times New Roman">B</text>
+                <text x="165" y="158" font-size="14" font-family="Times New Roman">C</text>
+                <text x="125" y="158" font-size="12" font-family="Times New Roman">D</text>
+                <text x="135" y="65" font-size="12" font-family="Times New Roman">E</text>
+                <text x="110" y="95" font-size="12" font-family="Times New Roman">O</text>
             </svg>`,
             
-            // Параллелограмм (47-50)
-            parallelogram: `<svg width="220" height="140" viewBox="0 0 220 140">
-                <polygon points="50,120 170,120 190,20 70,20" fill="none" stroke="#000" stroke-width="1.5"/>
-                <text x="40" y="138" font-size="16" font-family="Times New Roman">A</text>
-                <text x="175" y="138" font-size="16" font-family="Times New Roman">B</text>
-                <text x="195" y="15" font-size="16" font-family="Times New Roman">C</text>
-                <text x="60" y="15" font-size="16" font-family="Times New Roman">D</text>
+            parallelogram: `<svg width="200" height="120" viewBox="0 0 200 120">
+                <polygon points="40,100 160,100 180,20 60,20" fill="none" stroke="black" stroke-width="1.5"/>
+                <text x="30" y="118" font-size="14" font-family="Times New Roman">A</text>
+                <text x="165" y="118" font-size="14" font-family="Times New Roman">B</text>
+                <text x="185" y="15" font-size="14" font-family="Times New Roman">C</text>
+                <text x="50" y="15" font-size="14" font-family="Times New Roman">D</text>
             </svg>`,
             
-            // Ромб (51-54)            rhombus: `<svg width="220" height="180" viewBox="0 0 220 180">
-                <polygon points="110,25 190,90 110,155 30,90" fill="none" stroke="#000" stroke-width="1.5"/>
-                <line x1="110" y1="25" x2="110" y2="155" stroke="#000" stroke-width="1" stroke-dasharray="3,2"/>
-                <line x1="30" y1="90" x2="190" y2="90" stroke="#000" stroke-width="1" stroke-dasharray="3,2"/>
-                <text x="105" y="20" font-size="16" font-family="Times New Roman">D</text>
-                <text x="195" y="95" font-size="16" font-family="Times New Roman">C</text>
-                <text x="105" y="175" font-size="16" font-family="Times New Roman">B</text>
-                <text x="15" y="95" font-size="16" font-family="Times New Roman">A</text>
+            rhombus: `<svg width="200" height="160" viewBox="0 0 200 160">
+                <polygon points="100,20 180,80 100,140 20,80" fill="none" stroke="black" stroke-width="1.5"/>
+                <line x1="100" y1="20" x2="100" y2="140" stroke="black" stroke-width="1" stroke-dasharray="3,2"/>
+                <line x1="20" y1="80" x2="180" y2="80" stroke="black" stroke-width="1" stroke-dasharray="3,2"/>
+                <text x="95" y="15" font-size="14" font-family="Times New Roman">D</text>                <text x="185" y="85" font-size="14" font-family="Times New Roman">C</text>
+                <text x="95" y="158" font-size="14" font-family="Times New Roman">B</text>
+                <text x="5" y="85" font-size="14" font-family="Times New Roman">A</text>
             </svg>`,
             
-            // Параллелограмм с высотой (55-66)
-            parallelogramHeight: `<svg width="220" height="140" viewBox="0 0 220 140">
-                <polygon points="50,120 170,120 190,20 70,20" fill="none" stroke="#000" stroke-width="1.5"/>
-                <line x1="110" y1="120" x2="110" y2="20" stroke="#000" stroke-width="1" stroke-dasharray="3,2"/>
-                <rect x="105" y="115" width="10" height="10" fill="none" stroke="#000" stroke-width="1"/>
-                <text x="40" y="138" font-size="16" font-family="Times New Roman">A</text>
-                <text x="175" y="138" font-size="16" font-family="Times New Roman">B</text>
-                <text x="195" y="15" font-size="16" font-family="Times New Roman">C</text>
-                <text x="60" y="15" font-size="16" font-family="Times New Roman">D</text>
+            parallelogramHeight: `<svg width="200" height="120" viewBox="0 0 200 120">
+                <polygon points="40,100 160,100 180,20 60,20" fill="none" stroke="black" stroke-width="1.5"/>
+                <line x1="100" y1="100" x2="100" y2="20" stroke="black" stroke-width="1" stroke-dasharray="3,2"/>
+                <rect x="95" y="95" width="10" height="10" fill="none" stroke="black" stroke-width="1"/>
+                <text x="30" y="118" font-size="14" font-family="Times New Roman">A</text>
+                <text x="165" y="118" font-size="14" font-family="Times New Roman">B</text>
+                <text x="185" y="15" font-size="14" font-family="Times New Roman">C</text>
+                <text x="50" y="15" font-size="14" font-family="Times New Roman">D</text>
             </svg>`,
             
-            // Равнобедренный треугольник с высотой (67-74, 113-128)
-            isoscelesHeight: `<svg width="220" height="180" viewBox="0 0 220 180">
-                <polygon points="110,25 50,155 170,155" fill="none" stroke="#000" stroke-width="1.5"/>
-                <line x1="110" y1="25" x2="110" y2="155" stroke="#000" stroke-width="1" stroke-dasharray="3,2"/>
-                <rect x="105" y="150" width="10" height="10" fill="none" stroke="#000" stroke-width="1"/>
-                <text x="105" y="20" font-size="16" font-family="Times New Roman">C</text>
-                <text x="40" y="175" font-size="16" font-family="Times New Roman">A</text>
-                <text x="175" y="175" font-size="16" font-family="Times New Roman">B</text>
-                <text x="115" y="175" font-size="14" font-family="Times New Roman">H</text>
+            isoscelesHeight: `<svg width="200" height="160" viewBox="0 0 200 160">
+                <polygon points="100,20 40,140 170,140" fill="none" stroke="black" stroke-width="1.5"/>
+                <line x1="100" y1="20" x2="100" y2="140" stroke="black" stroke-width="1" stroke-dasharray="3,2"/>
+                <rect x="95" y="135" width="10" height="10" fill="none" stroke="black" stroke-width="1"/>
+                <text x="95" y="15" font-size="14" font-family="Times New Roman">C</text>
+                <text x="30" y="158" font-size="14" font-family="Times New Roman">A</text>
+                <text x="175" y="158" font-size="14" font-family="Times New Roman">B</text>
+                <text x="105" y="158" font-size="12" font-family="Times New Roman">H</text>
             </svg>`,
             
-            // Треугольник со средней линией (75-86)
-            triangleMidline: `<svg width="220" height="180" viewBox="0 0 220 180">
-                <polygon points="110,25 50,155 170,155" fill="none" stroke="#000" stroke-width="1.5"/>
-                <line x1="80" y1="90" x2="140" y2="90" stroke="#000" stroke-width="1" stroke-dasharray="3,2"/>
-                <text x="105" y="20" font-size="16" font-family="Times New Roman">C</text>
-                <text x="40" y="175" font-size="16" font-family="Times New Roman">A</text>
-                <text x="175" y="175" font-size="16" font-family="Times New Roman">B</text>
-                <text x="70" y="85" font-size="14" font-family="Times New Roman">D</text>
-                <text x="145" y="85" font-size="14" font-family="Times New Roman">E</text>
+            triangleMidline: `<svg width="200" height="160" viewBox="0 0 200 160">
+                <polygon points="100,20 40,140 160,140" fill="none" stroke="black" stroke-width="1.5"/>
+                <line x1="70" y1="80" x2="130" y2="80" stroke="black" stroke-width="1" stroke-dasharray="3,2"/>
+                <text x="95" y="15" font-size="14" font-family="Times New Roman">C</text>
+                <text x="30" y="158" font-size="14" font-family="Times New Roman">A</text>
+                <text x="165" y="158" font-size="14" font-family="Times New Roman">B</text>
+                <text x="60" y="75" font-size="12" font-family="Times New Roman">D</text>
+                <text x="135" y="75" font-size="12" font-family="Times New Roman">E</text>
             </svg>`,
             
-            // Прямоугольный треугольник (87-112)
-            rightTriangle: `<svg width="220" height="180" viewBox="0 0 220 180">
-                <polygon points="50,155 170,155 170,25" fill="none" stroke="#000" stroke-width="1.5"/>
-                <rect x="160" y="145" width="10" height="10" fill="none" stroke="#000" stroke-width="1"/>
-                <text x="40" y="175" font-size="16" font-family="Times New Roman">A</text>
-                <text x="175" y="175" font-size="16" font-family="Times New Roman">B</text>
-                <text x="175" y="20" font-size="16" font-family="Times New Roman">C</text>            </svg>`,
-            
-            // Окружность с центральным углом (129-144)
-            circleCentral: `<svg width="220" height="220" viewBox="0 0 220 220">
-                <circle cx="110" cy="110" r="90" fill="none" stroke="#000" stroke-width="1.5"/>
-                <line x1="110" y1="110" x2="200" y2="110" stroke="#000" stroke-width="1.2"/>
-                <line x1="110" y1="110" x2="46" y2="46" stroke="#000" stroke-width="1.2"/>
-                <circle cx="110" cy="110" r="3" fill="#000"/>
-                <text x="105" y="105" font-size="16" font-family="Times New Roman">O</text>
-                <text x="205" y="115" font-size="16" font-family="Times New Roman">A</text>
-                <text x="35" y="45" font-size="16" font-family="Times New Roman">B</text>
+            rightTriangle: `<svg width="200" height="160" viewBox="0 0 200 160">
+                <polygon points="40,140 160,140 160,20" fill="none" stroke="black" stroke-width="1.5"/>
+                <rect x="150" y="130" width="10" height="10" fill="none" stroke="black" stroke-width="1"/>
+                <text x="30" y="158" font-size="14" font-family="Times New Roman">A</text>
+                <text x="165" y="158" font-size="14" font-family="Times New Roman">B</text>
+                <text x="165" y="15" font-size="14" font-family="Times New Roman">C</text>
             </svg>`,
             
-            // Окружность с вписанным углом (145-152, 169-172)
-            circleInscribed: `<svg width="220" height="220" viewBox="0 0 220 220">
-                <circle cx="110" cy="110" r="90" fill="none" stroke="#000" stroke-width="1.5"/>
-                <line x1="50" y1="70" x2="170" y2="70" stroke="#000" stroke-width="1.2"/>
-                <line x1="50" y1="70" x2="110" y2="180" stroke="#000" stroke-width="1.2"/>
-                <line x1="170" y1="70" x2="110" y2="180" stroke="#000" stroke-width="1.2"/>
-                <text x="40" y="65" font-size="16" font-family="Times New Roman">A</text>
-                <text x="175" y="65" font-size="16" font-family="Times New Roman">B</text>
-                <text x="115" y="195" font-size="16" font-family="Times New Roman">C</text>
+            circleCentral: `<svg width="200" height="200" viewBox="0 0 200 200">
+                <circle cx="100" cy="100" r="80" fill="none" stroke="black" stroke-width="1.5"/>
+                <line x1="100" y1="100" x2="180" y2="100" stroke="black" stroke-width="1.2"/>
+                <line x1="100" y1="100" x2="45" y2="45" stroke="black" stroke-width="1.2"/>
+                <circle cx="100" cy="100" r="3" fill="black"/>
+                <text x="95" y="95" font-size="14" font-family="Times New Roman">O</text>
+                <text x="185" y="105" font-size="14" font-family="Times New Roman">A</text>                <text x="35" y="45" font-size="14" font-family="Times New Roman">B</text>
             </svg>`,
             
-            // Окружность с касательной (153-164)
-            circleTangent: `<svg width="220" height="220" viewBox="0 0 220 220">
-                <circle cx="110" cy="110" r="70" fill="none" stroke="#000" stroke-width="1.5"/>
-                <line x1="50" y1="180" x2="170" y2="40" stroke="#000" stroke-width="1.2"/>
-                <line x1="50" y1="180" x2="110" y2="110" stroke="#000" stroke-width="1" stroke-dasharray="3,2"/>
-                <circle cx="110" cy="110" r="3" fill="#000"/>
-                <text x="40" y="195" font-size="16" font-family="Times New Roman">C</text>
-                <text x="175" y="35" font-size="16" font-family="Times New Roman">A</text>
-                <text x="115" y="105" font-size="16" font-family="Times New Roman">O</text>
-                <text x="125" y="125" font-size="14" font-family="Times New Roman">B</text>
+            circleInscribed: `<svg width="200" height="200" viewBox="0 0 200 200">
+                <circle cx="100" cy="100" r="80" fill="none" stroke="black" stroke-width="1.5"/>
+                <line x1="50" y1="70" x2="170" y2="70" stroke="black" stroke-width="1.2"/>
+                <line x1="50" y1="70" x2="110" y2="170" stroke="black" stroke-width="1.2"/>
+                <line x1="170" y1="70" x2="110" y2="170" stroke="black" stroke-width="1.2"/>
+                <text x="40" y="65" font-size="14" font-family="Times New Roman">A</text>
+                <text x="175" y="65" font-size="14" font-family="Times New Roman">B</text>
+                <text x="115" y="185" font-size="14" font-family="Times New Roman">C</text>
             </svg>`,
             
-            // Окружность с двумя касательными (165-168)
-            circleTwoTangents: `<svg width="220" height="220" viewBox="0 0 220 220">
-                <circle cx="110" cy="110" r="70" fill="none" stroke="#000" stroke-width="1.5"/>
-                <line x1="50" y1="190" x2="110" y2="40" stroke="#000" stroke-width="1.2"/>
-                <line x1="170" y1="190" x2="110" y2="40" stroke="#000" stroke-width="1.2"/>
-                <circle cx="110" cy="110" r="3" fill="#000"/>
-                <text x="40" y="205" font-size="16" font-family="Times New Roman">A</text>
-                <text x="175" y="205" font-size="16" font-family="Times New Roman">B</text>
-                <text x="115" y="35" font-size="16" font-family="Times New Roman">C</text>
-                <text x="115" y="105" font-size="16" font-family="Times New Roman">O</text>
+            circleTangent: `<svg width="200" height="200" viewBox="0 0 200 200">
+                <circle cx="100" cy="100" r="65" fill="none" stroke="black" stroke-width="1.5"/>
+                <line x1="50" y1="165" x2="165" y2="40" stroke="black" stroke-width="1.2"/>
+                <line x1="50" y1="165" x2="100" y2="100" stroke="black" stroke-width="1" stroke-dasharray="3,2"/>
+                <circle cx="100" cy="100" r="3" fill="black"/>
+                <text x="40" y="180" font-size="14" font-family="Times New Roman">C</text>
+                <text x="170" y="35" font-size="14" font-family="Times New Roman">A</text>
+                <text x="105" y="95" font-size="14" font-family="Times New Roman">O</text>
+                <text x="115" y="115" font-size="12" font-family="Times New Roman">B</text>
             </svg>`,
             
-            // Четырёхугольник с вписанной окружностью (173-188)
-            quadInscribed: `<svg width="220" height="180" viewBox="0 0 220 180">                <polygon points="50,155 170,155 190,25 30,25" fill="none" stroke="#000" stroke-width="1.5"/>
-                <circle cx="110" cy="90" r="50" fill="none" stroke="#000" stroke-width="1" stroke-dasharray="3,2"/>
-                <text x="40" y="175" font-size="16" font-family="Times New Roman">A</text>
-                <text x="175" y="175" font-size="16" font-family="Times New Roman">B</text>
-                <text x="195" y="20" font-size="16" font-family="Times New Roman">C</text>
-                <text x="15" y="20" font-size="16" font-family="Times New Roman">D</text>
+            circleTwoTangents: `<svg width="200" height="200" viewBox="0 0 200 200">
+                <circle cx="100" cy="100" r="65" fill="none" stroke="black" stroke-width="1.5"/>
+                <line x1="50" y1="175" x2="100" y2="40" stroke="black" stroke-width="1.2"/>
+                <line x1="150" y1="175" x2="100" y2="40" stroke="black" stroke-width="1.2"/>
+                <circle cx="100" cy="100" r="3" fill="black"/>
+                <text x="40" y="190" font-size="14" font-family="Times New Roman">A</text>
+                <text x="155" y="190" font-size="14" font-family="Times New Roman">B</text>
+                <text x="105" y="35" font-size="14" font-family="Times New Roman">C</text>
+                <text x="105" y="95" font-size="14" font-family="Times New Roman">O</text>
             </svg>`,
             
-            // Четырёхугольник вписанный в окружность (189-212)
-            quadCircumscribed: `<svg width="220" height="220" viewBox="0 0 220 220">
-                <circle cx="110" cy="110" r="90" fill="none" stroke="#000" stroke-width="1.5"/>
-                <polygon points="50,70 170,70 190,155 30,155" fill="none" stroke="#000" stroke-width="1.5"/>
-                <text x="40" y="65" font-size="16" font-family="Times New Roman">A</text>
-                <text x="175" y="65" font-size="16" font-family="Times New Roman">B</text>
-                <text x="195" y="170" font-size="16" font-family="Times New Roman">C</text>
-                <text x="15" y="170" font-size="16" font-family="Times New Roman">D</text>
+            quadInscribed: `<svg width="200" height="160" viewBox="0 0 200 160">
+                <polygon points="40,140 160,140 180,20 20,20" fill="none" stroke="black" stroke-width="1.5"/>
+                <circle cx="100" cy="80" r="45" fill="none" stroke="black" stroke-width="1" stroke-dasharray="3,2"/>
+                <text x="30" y="158" font-size="14" font-family="Times New Roman">A</text>
+                <text x="165" y="158" font-size="14" font-family="Times New Roman">B</text>
+                <text x="185" y="15" font-size="14" font-family="Times New Roman">C</text>
+                <text x="5" y="15" font-size="14" font-family="Times New Roman">D</text>
             </svg>`,
             
-            // Треугольник с описанной окружностью (213-216)
-            triangleCircumscribed: `<svg width="220" height="220" viewBox="0 0 220 220">
-                <circle cx="110" cy="110" r="90" fill="none" stroke="#000" stroke-width="1.5"/>
-                <polygon points="110,25 50,180 170,180" fill="none" stroke="#000" stroke-width="1.5"/>
-                <circle cx="110" cy="110" r="3" fill="#000"/>
-                <text x="105" y="20" font-size="16" font-family="Times New Roman">C</text>
-                <text x="40" y="195" font-size="16" font-family="Times New Roman">A</text>
-                <text x="175" y="195" font-size="16" font-family="Times New Roman">B</text>
-                <text x="115" y="105" font-size="16" font-family="Times New Roman">O</text>
+            quadCircumscribed: `<svg width="200" height="200" viewBox="0 0 200 200">
+                <circle cx="100" cy="100" r="80" fill="none" stroke="black" stroke-width="1.5"/>
+                <polygon points="50,70 170,70 180,150 20,150" fill="none" stroke="black" stroke-width="1.5"/>
+                <text x="40" y="65" font-size="14" font-family="Times New Roman">A</text>
+                <text x="175" y="65" font-size="14" font-family="Times New Roman">B</text>
+                <text x="185" y="165" font-size="14" font-family="Times New Roman">C</text>                <text x="5" y="165" font-size="14" font-family="Times New Roman">D</text>
+            </svg>`,
+            
+            triangleCircumscribed: `<svg width="200" height="200" viewBox="0 0 200 200">
+                <circle cx="100" cy="100" r="80" fill="none" stroke="black" stroke-width="1.5"/>
+                <polygon points="100,25 50,170 150,170" fill="none" stroke="black" stroke-width="1.5"/>
+                <circle cx="100" cy="100" r="3" fill="black"/>
+                <text x="95" y="20" font-size="14" font-family="Times New Roman">C</text>
+                <text x="40" y="185" font-size="14" font-family="Times New Roman">A</text>
+                <text x="155" y="185" font-size="14" font-family="Times New Roman">B</text>
+                <text x="105" y="95" font-size="14" font-family="Times New Roman">O</text>
             </svg>`
         };
 
@@ -341,7 +325,8 @@
             { id: 16, text: '16. В треугольнике ABC CD – медиана, угол C равен 90°, угол B равен 31°. Найдите угол ACD.', answer: '59', figure: 'rightTriangleMedian' },
             { id: 17, text: '17. (ОБЗ) Острый угол B прямоугольного треугольника ABC равен 21°. Найдите величину угла между биссектрисой CD и медианой CM, проведёнными из вершины прямого угла C.', answer: '24', figure: 'rightTriangleMedian' },
             { id: 18, text: '18. (ОБЗ) Острый угол B прямоугольного треугольника ABC равен 17°. Найдите величину угла между биссектрисой CD и медианой CM, проведёнными из вершины прямого угла C.', answer: '28', figure: 'rightTriangleMedian' },
-            { id: 19, text: '19. (ОБЗ) Острый угол B прямоугольного треугольника ABC равен 16°. Найдите величину угла между биссектрисой CD и медианой CM, проведёнными из вершины прямого угла C.', answer: '29', figure: 'rightTriangleMedian' },            { id: 20, text: '20. (ОБЗ) Острый угол B прямоугольного треугольника ABC равен 20°. Найдите величину угла между биссектрисой CD и медианой CM, проведёнными из вершины прямого угла C.', answer: '25', figure: 'rightTriangleMedian' },
+            { id: 19, text: '19. (ОБЗ) Острый угол B прямоугольного треугольника ABC равен 16°. Найдите величину угла между биссектрисой CD и медианой CM, проведёнными из вершины прямого угла C.', answer: '29', figure: 'rightTriangleMedian' },
+            { id: 20, text: '20. (ОБЗ) Острый угол B прямоугольного треугольника ABC равен 20°. Найдите величину угла между биссектрисой CD и медианой CM, проведёнными из вершины прямого угла C.', answer: '25', figure: 'rightTriangleMedian' },
             { id: 21, text: '21. В прямоугольном треугольнике угол между высотой и биссектрисой, проведёнными из вершины прямого угла, равен 14°. Найдите меньший угол прямоугольного треугольника.', answer: '28', figure: 'rightTriangleMedian' },
             { id: 22, text: '22. В прямоугольном треугольнике угол между высотой и биссектрисой, проведёнными из вершины прямого угла, равен 34°. Найдите меньший угол прямоугольного треугольника.', answer: '68', figure: 'rightTriangleMedian' },
             { id: 23, text: '23. В прямоугольном треугольнике угол между высотой и биссектрисой, проведёнными из вершины прямого угла, равен 9°. Найдите меньший угол прямоугольного треугольника.', answer: '18', figure: 'rightTriangleMedian' },
@@ -356,8 +341,7 @@
             { id: 32, text: '32. Острые углы прямоугольного треугольника равны 87° и 3°. Найдите угол между высотой и медианой, проведёнными из вершины прямого угла.', answer: '84', figure: 'rightTriangleMedian' },
             { id: 33, text: '33. (Демо) Острый угол B прямоугольного треугольника ABC равен 64°. Найдите величину угла между высотой CH и медианой CM, проведёнными из вершины прямого угла C.', answer: '26', figure: 'rightTriangleMedian' },
             { id: 34, text: '34. (Демо) Острый угол B прямоугольного треугольника ABC равен 61°. Найдите величину угла между высотой CH и медианой CM, проведёнными из вершины прямого угла C.', answer: '29', figure: 'rightTriangleMedian' },
-            { id: 35, text: '35. В треугольнике ABC AD – биссектриса, угол C равен 104°, угол CAD равен 6°. Найдите угол B.', answer: '58', figure: 'triangleBisector' },
-            { id: 36, text: '36. В треугольнике ABC AD – биссектриса, угол C равен 105°, угол CAD равен 7°. Найдите угол B.', answer: '56', figure: 'triangleBisector' },
+            { id: 35, text: '35. В треугольнике ABC AD – биссектриса, угол C равен 104°, угол CAD равен 6°. Найдите угол B.', answer: '58', figure: 'triangleBisector' },            { id: 36, text: '36. В треугольнике ABC AD – биссектриса, угол C равен 105°, угол CAD равен 7°. Найдите угол B.', answer: '56', figure: 'triangleBisector' },
             { id: 37, text: '37. В треугольнике ABC AD – биссектриса, угол C равен 62°, угол CAD равен 32°. Найдите угол B.', answer: '52', figure: 'triangleBisector' },
             { id: 38, text: '38. В треугольнике ABC AD – биссектриса, угол C равен 68°, угол CAD равен 44°. Найдите угол B.', answer: '24', figure: 'triangleBisector' },
             { id: 39, text: '39. В треугольнике ABC угол A равен 44°, углы B и C – острые, высоты BD и CE пересекаются в точке O. Найдите угол DOE.', answer: '136', figure: 'triangleBisector' },
@@ -390,7 +374,8 @@
             { id: 66, text: '66. (ОБЗ) Две стороны треугольника равны 12 и 45. Высота, опущенная на бо́льшую из этих сторон, равна 10. Найдите высоту, опущенную на меньшую из этих сторон треугольника.', answer: '37.5', figure: 'isoscelesHeight' },
             { id: 67, text: '67. Угол при вершине, противолежащей основанию равнобедренного треугольника, равен 30°. Боковая сторона треугольника равна 11. Найдите площадь этого треугольника.', answer: '30.25', figure: 'isoscelesHeight' },
             { id: 68, text: '68. Угол при вершине, противолежащей основанию равнобедренного треугольника, равен 30°. Боковая сторона треугольника равна 13. Найдите площадь этого треугольника.', answer: '42.25', figure: 'isoscelesHeight' },
-            { id: 69, text: '69. Угол при вершине, противолежащей основанию равнобедренного треугольника, равен 30°. Боковая сторона треугольника равна 18. Найдите площадь этого треугольника.', answer: '81', figure: 'isoscelesHeight' },            { id: 70, text: '70. Угол при вершине, противолежащей основанию равнобедренного треугольника, равен 30°. Боковая сторона треугольника равна 14. Найдите площадь этого треугольника.', answer: '49', figure: 'isoscelesHeight' },
+            { id: 69, text: '69. Угол при вершине, противолежащей основанию равнобедренного треугольника, равен 30°. Боковая сторона треугольника равна 18. Найдите площадь этого треугольника.', answer: '81', figure: 'isoscelesHeight' },
+            { id: 70, text: '70. Угол при вершине, противолежащей основанию равнобедренного треугольника, равен 30°. Боковая сторона треугольника равна 14. Найдите площадь этого треугольника.', answer: '49', figure: 'isoscelesHeight' },
             { id: 71, text: '71. В равностороннем треугольнике ABC высота CH равна 45√3. Найдите AB.', answer: '90', figure: 'isoscelesHeight' },
             { id: 72, text: '72. В равностороннем треугольнике ABC высота CH равна 47√3. Найдите AB.', answer: '94', figure: 'isoscelesHeight' },
             { id: 73, text: '73. В равностороннем треугольнике ABC высота CH равна 27√3. Найдите AB.', answer: '54', figure: 'isoscelesHeight' },
@@ -405,8 +390,7 @@
             { id: 82, text: '82. (ОБЗ) В треугольнике ABC DF – средняя линия. Площадь треугольника ADF равна 27. Найдите площадь треугольника ABC.', answer: '108', figure: 'triangleMidline' },
             { id: 83, text: '83. (ОБЗ) Основания трапеции равны 4 и 10. Найдите больший из отрезков, на которые делит среднюю линию этой трапеции одна из её диагоналей.', answer: '5', figure: 'triangleMidline' },
             { id: 84, text: '84. (ОБЗ) Основания трапеции равны 2 и 8. Найдите больший из отрезков, на которые делит среднюю линию этой трапеции одна из её диагоналей.', answer: '4', figure: 'triangleMidline' },
-            { id: 85, text: '85. (ОБЗ) Основания трапеции равны 3 и 11. Найдите больший из отрезков, на которые делит среднюю линию этой трапеции одна из её диагоналей.', answer: '5.5', figure: 'triangleMidline' },
-            { id: 86, text: '86. (ОБЗ) Основания трапеции равны 1 и 17. Найдите больший из отрезков, на которые делит среднюю линию этой трапеции одна из её диагоналей.', answer: '8.5', figure: 'triangleMidline' },
+            { id: 85, text: '85. (ОБЗ) Основания трапеции равны 3 и 11. Найдите больший из отрезков, на которые делит среднюю линию этой трапеции одна из её диагоналей.', answer: '5.5', figure: 'triangleMidline' },            { id: 86, text: '86. (ОБЗ) Основания трапеции равны 1 и 17. Найдите больший из отрезков, на которые делит среднюю линию этой трапеции одна из её диагоналей.', answer: '8.5', figure: 'triangleMidline' },
             { id: 87, text: '87. В треугольнике ABC AC=BC=16, AB=8. Найдите cosA.', answer: '0.25', figure: 'rightTriangle' },
             { id: 88, text: '88. В треугольнике ABC AC=BC=20, AB=12. Найдите cosA.', answer: '0.3', figure: 'rightTriangle' },
             { id: 89, text: '89. В треугольнике ABC AC=BC=20, AB=28. Найдите cosA.', answer: '0.7', figure: 'rightTriangle' },
@@ -439,7 +423,8 @@
             { id: 116, text: '116. В треугольнике ABC AC=BC, высота CH равна 19.2, cosA=0.28. Найдите AC.', answer: '25', figure: 'isoscelesHeight' },
             { id: 117, text: '117. В треугольнике ABC AC=BC, высота CH равна 1, cosA=2√6/5. Найдите AC.', answer: '5', figure: 'isoscelesHeight' },
             { id: 118, text: '118. В треугольнике ABC AC=BC, высота CH равна 2√6, cosA=0.2. Найдите AC.', answer: '10', figure: 'isoscelesHeight' },
-            { id: 119, text: '119. В треугольнике ABC AC=BC, AB=20, высота AH равна 8. Найдите синус угла BAC.', answer: '0.4', figure: 'isoscelesHeight' },            { id: 120, text: '120. В треугольнике ABC AC=BC, AB=10, высота AH равна 3. Найдите синус угла BAC.', answer: '0.3', figure: 'isoscelesHeight' },
+            { id: 119, text: '119. В треугольнике ABC AC=BC, AB=20, высота AH равна 8. Найдите синус угла BAC.', answer: '0.4', figure: 'isoscelesHeight' },
+            { id: 120, text: '120. В треугольнике ABC AC=BC, AB=10, высота AH равна 3. Найдите синус угла BAC.', answer: '0.3', figure: 'isoscelesHeight' },
             { id: 121, text: '121. В треугольнике ABC AB=BC, AC=14, высота CH равна 7. Найдите синус угла ACB.', answer: '0.5', figure: 'isoscelesHeight' },
             { id: 122, text: '122. В треугольнике ABC AB=BC, AC=15, высота CH равна 6. Найдите синус угла ACB.', answer: '0.4', figure: 'isoscelesHeight' },
             { id: 123, text: '123. В треугольнике ABC AC=BC, AB=8, AH – высота, BH=2. Найдите косинус угла BAC.', answer: '0.25', figure: 'isoscelesHeight' },
@@ -454,8 +439,7 @@
             { id: 132, text: '132. (ОБЗ) Найдите центральный угол, если он на 39° больше острого вписанного угла, опирающегося на ту же дугу.', answer: '78', figure: 'circleCentral' },
             { id: 133, text: '133. (ОБЗ) Центральный угол на 32° больше острого вписанного угла, опирающегося на ту же дугу окружности. Найдите вписанный угол.', answer: '32', figure: 'circleCentral' },
             { id: 134, text: '134. (ОБЗ) Центральный угол на 36° больше острого вписанного угла, опирающегося на ту же дугу окружности. Найдите вписанный угол.', answer: '36', figure: 'circleCentral' },
-            { id: 135, text: '135. (ОБЗ) Центральный угол на 27° больше острого вписанного угла, опирающегося на ту же дугу окружности. Найдите вписанный угол.', answer: '27', figure: 'circleCentral' },
-            { id: 136, text: '136. (ОБЗ) Центральный угол на 41° больше острого вписанного угла, опирающегося на ту же дугу окружности. Найдите вписанный угол.', answer: '41', figure: 'circleCentral' },
+            { id: 135, text: '135. (ОБЗ) Центральный угол на 27° больше острого вписанного угла, опирающегося на ту же дугу окружности. Найдите вписанный угол.', answer: '27', figure: 'circleCentral' },            { id: 136, text: '136. (ОБЗ) Центральный угол на 41° больше острого вписанного угла, опирающегося на ту же дугу окружности. Найдите вписанный угол.', answer: '41', figure: 'circleCentral' },
             { id: 137, text: '137. (ОБЗ) Отрезки AC и BD – диаметры окружности с центром O. Угол AOD равен 114°. Найдите вписанный угол ACB.', answer: '57', figure: 'circleInscribed' },
             { id: 138, text: '138. (ОБЗ) Отрезки AC и BD – диаметры окружности с центром O. Угол AOD равен 130°. Найдите вписанный угол ACB.', answer: '65', figure: 'circleInscribed' },
             { id: 139, text: '139. (ОБЗ) Отрезки AC и BD – диаметры окружности с центром O. Угол AOD равен 68°. Найдите вписанный угол ACB.', answer: '34', figure: 'circleInscribed' },
@@ -488,7 +472,8 @@
             { id: 166, text: '166. Через концы A и B дуги окружности с центром O проведены касательные AC и BC. Меньшая дуга AB равна 40°. Найдите угол ACB.', answer: '140', figure: 'circleTwoTangents' },
             { id: 167, text: '167. Через концы A и B дуги окружности с центром O проведены касательные AC и BC. Меньшая дуга AB равна 74°. Найдите угол ACB.', answer: '106', figure: 'circleTwoTangents' },
             { id: 168, text: '168. Через концы A и B дуги окружности с центром O проведены касательные AC и BC. Меньшая дуга AB равна 64°. Найдите угол ACB.', answer: '116', figure: 'circleTwoTangents' },
-            { id: 169, text: '169. Угол ACB равен 54°. Градусная мера дуги AB окружности, не содержащей точек D и E, равна 138°. Найдите угол DAE.', answer: '15', figure: 'circleInscribed' },            { id: 170, text: '170. Угол ACB равен 62°. Градусная мера дуги AB окружности, не содержащей точек D и E, равна 142°. Найдите угол DAE.', answer: '9', figure: 'circleInscribed' },
+            { id: 169, text: '169. Угол ACB равен 54°. Градусная мера дуги AB окружности, не содержащей точек D и E, равна 138°. Найдите угол DAE.', answer: '15', figure: 'circleInscribed' },
+            { id: 170, text: '170. Угол ACB равен 62°. Градусная мера дуги AB окружности, не содержащей точек D и E, равна 142°. Найдите угол DAE.', answer: '9', figure: 'circleInscribed' },
             { id: 171, text: '171. Угол ACB равен 46°. Градусная мера дуги AB окружности, не содержащей точек D и E, равна 130°. Найдите угол DAE.', answer: '19', figure: 'circleInscribed' },
             { id: 172, text: '172. Угол ACB равен 55°. Градусная мера дуги AB окружности, не содержащей точек D и E, равна 136°. Найдите угол DAE.', answer: '13', figure: 'circleInscribed' },
             { id: 173, text: '173. В четырёхугольник ABCD вписана окружность, AB=13, BC=7 и AD=11. Найдите четвёртую сторону четырёхугольника.', answer: '17', figure: 'quadInscribed' },
@@ -503,8 +488,7 @@
             { id: 182, text: '182. Периметр прямоугольной трапеции, описанной около окружности, равен 32, её большая боковая сторона равна 9. Найдите радиус окружности.', answer: '3.5', figure: 'quadInscribed' },
             { id: 183, text: '183. Периметр прямоугольной трапеции, описанной около окружности, равен 24, её большая боковая сторона равна 7. Найдите радиус окружности.', answer: '2.5', figure: 'quadInscribed' },
             { id: 184, text: '184. Периметр прямоугольной трапеции, описанной около окружности, равен 28, её большая боковая сторона равна 11. Найдите радиус окружности.', answer: '3', figure: 'quadInscribed' },
-            { id: 185, text: '185. Боковые стороны трапеции, описанной около окружности, равны 15 и 22. Найдите среднюю линию трапеции.', answer: '18.5', figure: 'quadInscribed' },
-            { id: 186, text: '186. Боковые стороны трапеции, описанной около окружности, равны 9 и 12. Найдите среднюю линию трапеции.', answer: '10.5', figure: 'quadInscribed' },
+            { id: 185, text: '185. Боковые стороны трапеции, описанной около окружности, равны 15 и 22. Найдите среднюю линию трапеции.', answer: '18.5', figure: 'quadInscribed' },            { id: 186, text: '186. Боковые стороны трапеции, описанной около окружности, равны 9 и 12. Найдите среднюю линию трапеции.', answer: '10.5', figure: 'quadInscribed' },
             { id: 187, text: '187. Боковые стороны трапеции, описанной около окружности, равны 12 и 15. Найдите среднюю линию трапеции.', answer: '13.5', figure: 'quadInscribed' },
             { id: 188, text: '188. Боковые стороны трапеции, описанной около окружности, равны 10 и 19. Найдите среднюю линию трапеции.', answer: '14.5', figure: 'quadInscribed' },
             { id: 189, text: '189. (ОБЗ) Четырёхугольник ABCD вписан в окружность. Угол ABD равен 61°, угол CAD равен 37°. Найдите угол ABC.', answer: '98', figure: 'quadCircumscribed' },
@@ -537,7 +521,8 @@
             { id: 216, text: '216. (ОБЗ) В треугольнике ABC сторона AB равна 8√3, угол C равен 120°. Найдите радиус описанной около этого треугольника окружности.', answer: '8', figure: 'triangleCircumscribed' }
         ];
 
-        var completedTasks = {};        var sortUnsolvedFirst = false;
+        var completedTasks = {};
+        var sortUnsolvedFirst = false;
 
         function loadCompletedTasks() {
             try {
@@ -552,8 +537,7 @@
         }
 
         function getUnsolvedCount() {
-            var count = 0;
-            for (var i = 0; i < tasks.length; i++) {
+            var count = 0;            for (var i = 0; i < tasks.length; i++) {
                 if (!completedTasks[tasks[i].id]) { count++; }
             }
             return count;
@@ -586,7 +570,8 @@
                 });
             }
 
-            for (var i = 0; i < displayTasks.length; i++) {                var task = displayTasks[i];
+            for (var i = 0; i < displayTasks.length; i++) {
+                var task = displayTasks[i];
                 var isCompleted = completedTasks[task.id];
 
                 var block = document.createElement('div');
@@ -602,7 +587,6 @@
                 var status = document.createElement('div');
                 status.className = 'task-status ' + (isCompleted ? 'status-solved' : 'status-pending');
                 status.textContent = isCompleted ? 'решено' : 'не решено';
-
                 header.appendChild(title);
                 header.appendChild(status);
                 block.appendChild(header);
@@ -636,6 +620,7 @@
                 message.className = 'message';
                 message.id = 'message-' + task.id;
                 block.appendChild(message);
+
                 var btnContainer = document.createElement('div');
                 btnContainer.style.marginTop = '10px';
 
@@ -650,8 +635,7 @@
                 btnContainer.appendChild(btnCheck);
 
                 var btnSolved = document.createElement('button');
-                btnSolved.className = 'btn-solved' + (isCompleted ? ' marked' : '');
-                btnSolved.textContent = isCompleted ? '✓ решено' : 'решено';
+                btnSolved.className = 'btn-solved' + (isCompleted ? ' marked' : '');                btnSolved.textContent = isCompleted ? '✓ решено' : 'решено';
                 btnSolved.onclick = function(taskId) {
                     return function() { toggleSolved(taskId); };
                 }(task.id);
@@ -684,7 +668,8 @@
             if (userAnswer === correctAnswer) {
                 input.className = 'answer-input correct';
                 message.textContent = '✓ Правильно! Задание отмечено как решённое.';
-                message.className = 'message success show';                input.disabled = true;
+                message.className = 'message success show';
+                input.disabled = true;
                 btnCheck.disabled = true;
                 
                 if (!completedTasks[taskId]) {
@@ -699,8 +684,7 @@
                 setTimeout(function() {
                     input.className = 'answer-input';
                     message.classList.remove('show');
-                }, 2000);
-            }
+                }, 2000);            }
         }
 
         function toggleSolved(taskId) {
@@ -733,6 +717,7 @@
                     }
                 }
             });
-        });    </script>
+        });
+    </script>
 </body>
 </html>
