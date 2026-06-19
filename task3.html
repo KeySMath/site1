@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ЕГЭ Математика - Задание 3</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #c5d5d4;
+            color: #1a1a1a;
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+        .header {
+            background-color: #c5d5d4;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #a8b8b7;
+            position: sticky; top: 0; z-index: 100;
+        }
+        .header h1 { font-size: 16px; color: #0d4f4f; font-weight: 400; flex: 1; }
+        .controls {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 15px; background: white;
+            border-bottom: 1px solid #a8b8b7;
+            position: sticky; top: 45px; z-index: 99;
+        }
+        .unsolved-counter {
+            background: #ffe0e0; color: #c0392b;
+            padding: 6px 12px; border-radius: 5px; font-size: 14px;
+        }
+        .sort-btn {
+            background: white; border: 1px solid #0d4f4f; color: #0d4f4f;
+            padding: 8px 16px; border-radius: 5px; cursor: pointer; font-size: 14px;
+        }
+        .sort-btn:hover { background: #0d4f4f; color: white; }
+        .tasks-container { max-width: 900px; margin: 0 auto; padding: 15px; }
+        .task-block {
+            background: white; border-radius: 10px; padding: 20px;
+            margin-bottom: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        .task-title {
+            font-size: 17px; color: #0a0a0a; font-weight: 400;
+            margin-bottom: 15px; background: #B0E0E6;
+            padding: 10px 15px; border-radius: 5px; display: inline-block;
+        }
+        .task-header {            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 15px; flex-wrap: wrap; gap: 10px;
+        }
+        .task-status { font-size: 13px; padding: 4px 10px; border-radius: 4px; }
+        .status-pending { background: #ffe0e0; color: #c0392b; }
+        .status-solved { background: #e0f0f0; color: #0d4f4f; }
+        .task-text {
+            font-size: 16px; line-height: 2; color: #0a0a0a;
+            margin-bottom: 15px; font-family: 'Times New Roman', serif;
+        }
+        .figure-container {
+            text-align: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: #fafafa;
+            border-radius: 5px;
+        }
+        .figure-container svg {
+            max-width: 100%;
+            height: auto;
+        }
+        .answer-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #0d4f4f;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            font-family: inherit;
+        }
+        .answer-input:focus {
+            outline: none;
+            border-color: #0d4f4f;
+            box-shadow: 0 0 0 3px rgba(13, 79, 79, 0.1);
+        }
+        .answer-input.correct {
+            border-color: #27ae60;
+            background: #e8f8f5;
+        }
+        .answer-input.wrong {
+            border-color: #c0392b;
+            background: #fde8e8;
+        }
+        .btn-check {
+            background: white;
+            color: #0d4f4f;
+            border: 1px solid #0d4f4f;
+            padding: 9px 20px;
+            border-radius: 5px;
+            cursor: pointer;            font-size: 14px;
+            margin-right: 10px;
+        }
+        .btn-check:hover { background: #0d4f4f; color: white; }
+        .btn-check:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-solved {
+            background: white;
+            color: #0a0a0a;
+            border: 1px solid #0d4f4f;
+            padding: 9px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn-solved:hover { background: #0d4f4f; color: white; }
+        .btn-solved.marked { background: #0d4f4f; color: white; }
+        .message {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            display: none;
+            font-weight: 500;
+        }
+        .message.show { display: block; }
+        .message.success { background: #e8f8f5; color: #27ae60; border: 1px solid #27ae60; }
+        .message.error { background: #fde8e8; color: #c0392b; border: 1px solid #c0392b; }
+        
+        @media (min-width: 768px) {
+            .header { padding: 15px 25px; }
+            .header h1 { font-size: 18px; }
+            .controls { padding: 12px 25px; }
+            .tasks-container { padding: 25px; }
+            .task-block { padding: 25px 30px; }
+            .task-text { font-size: 17px; }
+        }
+        @media (max-width: 480px) {
+            .header { padding: 10px 12px; }
+            .header h1 { font-size: 14px; }
+            .controls { padding: 8px 12px; }
+            .tasks-container { padding: 12px; }
+            .task-block { padding: 15px; }
+            .task-text { font-size: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header"><h1>ЗАДАНИЕ 3 — Стереометрия</h1></div>
+    <div class="controls">
+        <div class="unsolved-counter" id="unsolvedCounter">Не решено: 0</div>
+        <button class="sort-btn" onclick="toggleSort()"><span id="sortArrow">↓</span> <span id="sortText">Сортировка</span></button>    </div>
+    <div class="tasks-container" id="tasksContainer"></div>
+
+    <script>
+        var figures = {};
+        
+        // Прямоугольный параллелепипед
+        figures.parallelepiped = '<svg width="240" height="200" viewBox="0 0 240 200"><path d="M 60 120 L 180 120 L 200 40 L 80 40 Z" fill="none" stroke="black" stroke-width="2"/><path d="M 60 120 L 80 160 L 200 160 L 200 40" fill="none" stroke="black" stroke-width="2"/><path d="M 80 160 L 80 40" fill="none" stroke="black" stroke-width="2" stroke-dasharray="4,2"/><path d="M 180 120 L 200 160" fill="none" stroke="black" stroke-width="2" stroke-dasharray="4,2"/><text x="50" y="130" font-size="14" font-family="Times New Roman">A</text><text x="185" y="130" font-size="14" font-family="Times New Roman">B</text><text x="205" y="35" font-size="14" font-family="Times New Roman">C</text><text x="70" y="35" font-size="14" font-family="Times New Roman">D</text><text x="50" y="175" font-size="14" font-family="Times New Roman">A₁</text><text x="185" y="175" font-size="14" font-family="Times New Roman">B₁</text><text x="205" y="175" font-size="14" font-family="Times New Roman">C₁</text><text x="70" y="175" font-size="14" font-family="Times New Roman">D₁</text></svg>';
+        
+        // Куб
+        figures.cube = '<svg width="240" height="200" viewBox="0 0 240 200"><path d="M 70 130 L 170 130 L 190 50 L 90 50 Z" fill="none" stroke="black" stroke-width="2"/><path d="M 70 130 L 90 170 L 190 170 L 190 50" fill="none" stroke="black" stroke-width="2"/><path d="M 90 170 L 90 50" fill="none" stroke="black" stroke-width="2" stroke-dasharray="4,2"/><path d="M 170 130 L 190 170" fill="none" stroke="black" stroke-width="2" stroke-dasharray="4,2"/><text x="60" y="140" font-size="14" font-family="Times New Roman">A</text><text x="175" y="140" font-size="14" font-family="Times New Roman">B</text><text x="195" y="45" font-size="14" font-family="Times New Roman">C</text><text x="80" y="45" font-size="14" font-family="Times New Roman">D</text><text x="60" y="185" font-size="14" font-family="Times New Roman">A₁</text><text x="175" y="185" font-size="14" font-family="Times New Roman">B₁</text><text x="195" y="185" font-size="14" font-family="Times New Roman">C₁</text><text x="80" y="185" font-size="14" font-family="Times New Roman">D₁</text></svg>';
+        
+        // Треугольная призма
+        figures.triangularPrism = '<svg width="240" height="200" viewBox="0 0 240 200"><path d="M 120 40 L 190 140 L 50 140 Z" fill="none" stroke="black" stroke-width="2"/><path d="M 120 40 L 140 80 L 210 180 L 190 140" fill="none" stroke="black" stroke-width="2"/><path d="M 50 140 L 70 180 L 210 180" fill="none" stroke="black" stroke-width="2"/><path d="M 120 40 L 70 180" fill="none" stroke="black" stroke-width="2" stroke-dasharray="4,2"/><path d="M 50 140 L 70 180" fill="none" stroke="black" stroke-width="2" stroke-dasharray="4,2"/><text x="115" y="35" font-size="14" font-family="Times New Roman">A</text><text x="195" y="145" font-size="14" font-family="Times New Roman">B</text><text x="35" y="145" font-size="14" font-family="Times New Roman">C</text><text x="145" y="75" font-size="14" font-family="Times New Roman">A₁</text><text x="215" y="195" font-size="14" font-family="Times New Roman">B₁</text><text x="55" y="195" font-size="14" font-family="Times New Roman">C₁</text></svg>';
+        
+        // Четырёхугольная пирамида
+        figures.quadrangularPyramid = '<svg width="240" height="200" viewBox="0 0 240 200"><path d="M 60 140 L 180 140 L 200 100 L 80 100 Z" fill="none" stroke="black" stroke-width="2"/><path d="M 60 140 L 120 40 L 180 140" fill="none" stroke="black" stroke-width="2"/><path d="M 80 100 L 120 40 L 200 100" fill="none" stroke="black" stroke-width="2"/><path d="M 80 100 L 60 140" fill="none" stroke="black" stroke-width="2" stroke-dasharray="4,2"/><path d="M 200 100 L 180 140" fill="none" stroke="black" stroke-width="2" stroke-dasharray="4,2"/><text x="50" y="155" font-size="14" font-family="Times New Roman">A</text><text x="185" y="155" font-size="14" font-family="Times New Roman">B</text><text x="205" y="95" font-size="14" font-family="Times New Roman">C</text><text x="70" y="95" font-size="14" font-family="Times New Roman">D</text><text x="125" y="35" font-size="14" font-family="Times New Roman">S</text><text x="110" y="115" font-size="14" font-family="Times New Roman">O</text></svg>';
+        
+        // Конус
+        figures.cone = '<svg width="240" height="200" viewBox="0 0 240 200"><ellipse cx="120" cy="160" rx="70" ry="20" fill="none" stroke="black" stroke-width="2"/><path d="M 50 160 L 120 40 L 190 160" fill="none" stroke="black" stroke-width="2"/><line x1="120" y1="40" x2="120" y2="160" stroke="black" stroke-width="1.5" stroke-dasharray="4,2"/><line x1="120" y1="160" x2="190" y2="160" stroke="black" stroke-width="1.5" stroke-dasharray="4,2"/><text x="125" y="35" font-size="14" font-family="Times New Roman">S</text><text x="125" y="155" font-size="14" font-family="Times New Roman">O</text><text x="195" y="165" font-size="14" font-family="Times New Roman">A</text><text x="155" y="100" font-size="14" font-family="Times New Roman">l</text></svg>';
+        
+        // Цилиндр
+        figures.cylinder = '<svg width="240" height="200" viewBox="0 0 240 200"><ellipse cx="120" cy="60" rx="70" ry="20" fill="none" stroke="black" stroke-width="2"/><ellipse cx="120" cy="160" rx="70" ry="20" fill="none" stroke="black" stroke-width="2"/><path d="M 50 60 L 50 160" fill="none" stroke="black" stroke-width="2"/><path d="M 190 60 L 190 160" fill="none" stroke="black" stroke-width="2"/><line x1="120" y1="60" x2="120" y2="160" stroke="black" stroke-width="1.5" stroke-dasharray="4,2"/><text x="125" y="55" font-size="14" font-family="Times New Roman">O₁</text><text x="125" y="175" font-size="14" font-family="Times New Roman">O</text><text x="195" y="175" font-size="14" font-family="Times New Roman">A</text></svg>';
+        
+        // Шар
+        figures.sphere = '<svg width="240" height="200" viewBox="0 0 240 200"><circle cx="120" cy="100" r="70" fill="none" stroke="black" stroke-width="2"/><ellipse cx="120" cy="100" rx="70" ry="25" fill="none" stroke="black" stroke-width="1.5" stroke-dasharray="4,2"/><line x1="120" y1="100" x2="190" y2="100" stroke="black" stroke-width="1.5"/><text x="115" y="95" font-size="14" font-family="Times New Roman">O</text><text x="195" y="105" font-size="14" font-family="Times New Roman">R</text></svg>';
+        
+        // Шестиугольная призма
+        figures.hexagonalPrism = '<svg width="240" height="200" viewBox="0 0 240 200"><path d="M 120 40 L 170 65 L 170 115 L 120 140 L 70 115 L 70 65 Z" fill="none" stroke="black" stroke-width="2"/><path d="M 120 40 L 120 90 L 170 65" fill="none" stroke="black" stroke-width="1.5" stroke-dasharray="4,2"/><path d="M 70 65 L 120 90 L 120 140" fill="none" stroke="black" stroke-width="1.5" stroke-dasharray="4,2"/><path d="M 70 115 L 120 90 L 170 115" fill="none" stroke="black" stroke-width="1.5" stroke-dasharray="4,2"/><text x="115" y="35" font-size="14" font-family="Times New Roman">A</text><text x="175" y="60" font-size="14" font-family="Times New Roman">B</text><text x="175" y="130" font-size="14" font-family="Times New Roman">C</text><text x="115" y="155" font-size="14" font-family="Times New Roman">D</text><text x="55" y="130" font-size="14" font-family="Times New Roman">E</text><text x="55" y="60" font-size="14" font-family="Times New Roman">F</text></svg>';
+
+        var tasks = [];
+        
+        // I) Параллелепипед
+        tasks.push({ id: 1, text: '1. В прямоугольном параллелепипеде ABCDA₁B₁C₁D₁ известно, что DD₁=2, C₁D₁=6, B₁C₁=3. Найдите длину диагонали AC₁.', answer: '7', figure: 'parallelepiped' });
+        tasks.push({ id: 2, text: '2. В прямоугольном параллелепипеде ABCDA₁B₁C₁D₁ известно, что BB₁=16, A₁B₁=2, A₁D₁=8. Найдите длину диагонали AC₁.', answer: '18', figure: 'parallelepiped' });
+        tasks.push({ id: 3, text: '3. В прямоугольном параллелепипеде ABCDA₁B₁C₁D₁ известно, что AA₁=10, AB=5, A₁D₁=10. Найдите длину диагонали DB₁.', answer: '15', figure: 'parallelepiped' });
+        tasks.push({ id: 4, text: '4. В прямоугольном параллелепипеде ABCDA₁B₁C₁D₁ известно, что CC₁=4, A₁B₁=1, BC=8. Найдите длину диагонали DB₁.', answer: '9', figure: 'parallelepiped' });
+        tasks.push({ id: 5, text: '5. В прямоугольном параллелепипеде ABCDA₁B₁C₁D₁ известно, что AA₁=12, A₁B₁=12, B₁C₁=1. Найдите длину диагонали BD₁.', answer: '17', figure: 'parallelepiped' });
+        tasks.push({ id: 6, text: '6. В прямоугольном параллелепипеде ABCDA₁B₁C₁D₁ известно, что BB₁=8, CD=8, AD=14. Найдите длину диагонали BD₁.', answer: '18', figure: 'parallelepiped' });
+        tasks.push({ id: 7, text: '7. В прямоугольном параллелепипеде ABCDA₁B₁C₁D₁ известно, что CC₁=6, CD=17, AD=6. Найдите длину диагонали CA₁.', answer: '19', figure: 'parallelepiped' });
+        tasks.push({ id: 8, text: '8. В прямоугольном параллелепипеде ABCDA₁B₁C₁D₁ известно, что DD₁=6, A₁B₁=12, A₁D₁=12. Найдите длину диагонали CA₁.', answer: '18', figure: 'parallelepiped' });
+        tasks.push({ id: 9, text: '9. Диагональ куба равна 12. Найдите его объём.', answer: '288√3', figure: 'cube' });
+        tasks.push({ id: 10, text: '10. Диагональ куба равна 3. Найдите его объём.', answer: '9√3', figure: 'cube' });
+        tasks.push({ id: 11, text: '11. Диагональ куба равна 27. Найдите его объём.', answer: '2187√3', figure: 'cube' });
+        tasks.push({ id: 12, text: '12. Диагональ куба равна 48. Найдите его объём.', answer: '12288√3', figure: 'cube' });
+
+        // II) Призма
+        tasks.push({ id: 13, text: '13. В прямоугольном параллелепипеде ABCDA₁B₁C₁D₁ известны длины рёбер: AB=7, AD=3, AA₁=4. Найдите площадь сечения параллелепипеда плоскостью, проходящей через точки A, B и C₁.', answer: '25', figure: 'parallelepiped' });
+        tasks.push({ id: 14, text: '14. В прямоугольном параллелепипеде ABCDA₁B₁C₁D₁ известны длины рёбер: AB=11, AD=6, AA₁=8. Найдите площадь сечения параллелепипеда плоскостью, проходящей через точки A, B и C₁.', answer: '110', figure: 'parallelepiped' });
+        tasks.push({ id: 15, text: '15. В прямоугольном параллелепипеде ABCDA₁B₁C₁D₁ известны длины рёбер: AB=21, AD=20, AA₁=23. Найдите площадь сечения, проходящего через вершины A, A₁ и C.', answer: '609', figure: 'parallelepiped' });        tasks.push({ id: 16, text: '16. В прямоугольном параллелепипеде ABCDA₁B₁C₁D₁ известны длины рёбер: AB=3, AD=4, AA₁=32. Найдите площадь сечения, проходящего через вершины C, C₁ и A.', answer: '100', figure: 'parallelepiped' });
+        tasks.push({ id: 17, text: '17. В прямоугольном параллелепипеде ABCDA₁B₁C₁D₁ известны длины рёбер: AB=27, AD=36, AA₁=10. Найдите площадь сечения, проходящего через вершины D, D₁ и B.', answer: '450', figure: 'parallelepiped' });
+        tasks.push({ id: 18, text: '18. В прямоугольном параллелепипеде ABCDA₁B₁C₁D₁ известны длины рёбер: AB=15, AD=8, AA₁=21. Найдите площадь сечения, проходящего через вершины B, B₁ и D.', answer: '273', figure: 'parallelepiped' });
+
+        // III) Пирамида
+        tasks.push({ id: 19, text: '19. Найдите площадь поверхности многогранника, изображённого на рисунке (все двугранные углы – прямые).', answer: '120', figure: 'parallelepiped' });
+        tasks.push({ id: 20, text: '20. Найдите площадь поверхности многогранника, изображённого на рисунке (все двугранные углы – прямые).', answer: '150', figure: 'parallelepiped' });
+
+        // IV) Конус
+        tasks.push({ id: 21, text: '21. В кубе ABCDA₁B₁C₁D₁ найдите угол между прямыми BC₁ и A₁B₁. Ответ дайте в градусах.', answer: '45', figure: 'cube' });
+        tasks.push({ id: 22, text: '22. В кубе ABCDA₁B₁C₁D₁ найдите угол между прямыми CD₁ и AD. Ответ дайте в градусах.', answer: '45', figure: 'cube' });
+        tasks.push({ id: 23, text: '23. В кубе ABCDA₁B₁C₁D₁ найдите угол между прямыми AC и BB₁. Ответ дайте в градусах.', answer: '90', figure: 'cube' });
+        tasks.push({ id: 24, text: '24. В кубе ABCDA₁B₁C₁D₁ найдите угол между прямыми CB₁ и C₁D₁. Ответ дайте в градусах.', answer: '60', figure: 'cube' });
+        tasks.push({ id: 25, text: '25. В кубе ABCDA₁B₁C₁D₁ найдите угол между прямыми CB₁ и AD. Ответ дайте в градусах.', answer: '60', figure: 'cube' });
+        tasks.push({ id: 26, text: '26. В кубе ABCDA₁B₁C₁D₁ найдите угол между прямыми AB₁ и CD. Ответ дайте в градусах.', answer: '60', figure: 'cube' });
+        tasks.push({ id: 27, text: '27. В кубе ABCDA₁B₁C₁D₁ найдите угол между прямыми BD и A₁D₁. Ответ дайте в градусах.', answer: '45', figure: 'cube' });
+        tasks.push({ id: 28, text: '28. В кубе ABCDA₁B₁C₁D₁ найдите угол между прямыми BA₁ и D₁C₁. Ответ дайте в градусах.', answer: '60', figure: 'cube' });
+        tasks.push({ id: 29, text: '29. В кубе ABCDA₁B₁C₁D₁ найдите угол между прямыми CD₁ и BC₁. Ответ дайте в градусах.', answer: '60', figure: 'cube' });
+        tasks.push({ id: 30, text: '30. В кубе ABCDA₁B₁C₁D₁ найдите угол между прямыми AC и BC₁. Ответ дайте в градусах.', answer: '60', figure: 'cube' });
+
+        // V) Цилиндр
+        tasks.push({ id: 31, text: '31. В правильной четырёхугольной призме ABCDA₁B₁C₁D₁ известно, что BD₁=2AD. Найдите угол между диагоналями DB₁ и CA₁. Ответ дайте в градусах.', answer: '90', figure: 'parallelepiped' });
+        tasks.push({ id: 32, text: '32. В правильной четырёхугольной призме ABCDA₁B₁C₁D₁ известно, что BD₁=2AD. Найдите угол между диагоналями DB₁ и AC₁. Ответ дайте в градусах.', answer: '60', figure: 'parallelepiped' });
+        tasks.push({ id: 33, text: '33. В правильной четырёхугольной призме ABCDA₁B₁C₁D₁ известно, что D₁B=2AB. Найдите угол между диагоналями BD₁ и CA₁. Ответ дайте в градусах.', answer: '90', figure: 'parallelepiped' });
+        tasks.push({ id: 34, text: '34. В правильной четырёхугольной призме ABCDA₁B₁C₁D₁ известно, что DB₁=2CB. Найдите угол между диагоналями BD₁ и AC₁. Ответ дайте в градусах.', answer: '60', figure: 'parallelepiped' });
+
+        // VI) Шар
+        tasks.push({ id: 35, text: '35. В прямоугольном параллелепипеде ABCDA₁B₁C₁D₁ известны длины рёбер: AB=6, AD=8, AA₁=21. Найдите синус угла между прямыми A₁D₁ и AC.', answer: '0.8', figure: 'parallelepiped' });
+        tasks.push({ id: 36, text: '36. В прямоугольном параллелепипеде ABCDA₁B₁C₁D₁ известны длины рёбер: AB=6, AD=8, AA₁=9. Найдите синус угла между прямыми CD и A₁C₁.', answer: '0.6', figure: 'parallelepiped' });
+        tasks.push({ id: 37, text: '37. В прямоугольном параллелепипеде ABCDA₁B₁C₁D₁ известны длины рёбер: AB=28, AD=16, AA₁=12. Найдите синус угла между прямыми DD₁ и B₁C.', answer: '0.8', figure: 'parallelepiped' });
+        tasks.push({ id: 38, text: '38. В прямоугольном параллелепипеде ABCDA₁B₁C₁D₁ известны длины рёбер: AB=9, AD=12, AA₁=18. Найдите синус угла между прямыми A₁D₁ и AC.', answer: '0.8', figure: 'parallelepiped' });
+        tasks.push({ id: 39, text: '39. В прямоугольном параллелепипеде ABCDA₁B₁C₁D₁ известны длины рёбер: AB=9, AD=12, AA₁=9. Найдите синус угла между прямыми DD₁ и B₁C.', answer: '0.8', figure: 'parallelepiped' });
+        tasks.push({ id: 40, text: '40. В прямоугольном параллелепипеде ABCDA₁B₁C₁D₁ известны длины рёбер: AB=8, AD=22, AA₁=6. Найдите синус угла между прямыми C₁D и AB.', answer: '0.6', figure: 'parallelepiped' });
+
+        var completedTasks = {};
+        var sortUnsolvedFirst = false;
+
+        function loadCompletedTasks() {
+            try {
+                var stored = localStorage.getItem('egeTask3Completed');
+                if (stored) { completedTasks = JSON.parse(stored); }
+            } catch (e) { completedTasks = {}; }
+        }
+
+        function saveCompletedTasks() {
+            try { localStorage.setItem('egeTask3Completed', JSON.stringify(completedTasks)); }
+            catch (e) {}
+        }
+
+        function getUnsolvedCount() {            var count = 0;
+            for (var i = 0; i < tasks.length; i++) {
+                if (!completedTasks[tasks[i].id]) { count++; }
+            }
+            return count;
+        }
+
+        function updateCounter() {
+            var counter = document.getElementById('unsolvedCounter');
+            var unsolved = getUnsolvedCount();
+            counter.textContent = 'Не решено: ' + unsolved + ' из ' + tasks.length;
+            if (unsolved === 0) {
+                counter.style.background = '#e0f0f0';
+                counter.style.color = '#0d4f4f';
+            } else {
+                counter.style.background = '#ffe0e0';
+                counter.style.color = '#c0392b';
+            }
+        }
+
+        function renderTasks() {
+            var container = document.getElementById('tasksContainer');
+            container.innerHTML = '';
+
+            var displayTasks = tasks.slice();
+            if (sortUnsolvedFirst) {
+                displayTasks.sort(function(a, b) {
+                    var aC = completedTasks[a.id] ? 1 : 0;
+                    var bC = completedTasks[b.id] ? 1 : 0;
+                    if (aC === bC) return a.id - b.id;
+                    return aC - bC;
+                });
+            }
+
+            for (var i = 0; i < displayTasks.length; i++) {
+                var task = displayTasks[i];
+                var isCompleted = completedTasks[task.id];
+
+                var block = document.createElement('div');
+                block.className = 'task-block';
+
+                var header = document.createElement('div');
+                header.className = 'task-header';
+
+                var title = document.createElement('div');
+                title.className = 'task-title';
+                title.textContent = 'Решите задание';
+
+                var status = document.createElement('div');
+                status.className = 'task-status ' + (isCompleted ? 'status-solved' : 'status-pending');                status.textContent = isCompleted ? 'решено' : 'не решено';
+
+                header.appendChild(title);
+                header.appendChild(status);
+                block.appendChild(header);
+
+                if (task.figure && figures[task.figure]) {
+                    var figureDiv = document.createElement('div');
+                    figureDiv.className = 'figure-container';
+                    figureDiv.innerHTML = figures[task.figure];
+                    block.appendChild(figureDiv);
+                }
+
+                var text = document.createElement('div');
+                text.className = 'task-text';
+                text.innerHTML = task.text;
+                block.appendChild(text);
+
+                var input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'answer-input';
+                input.placeholder = 'Введите ответ...';
+                input.id = 'input-' + task.id;
+                input.disabled = isCompleted;
+                if (isCompleted) {
+                    input.value = task.answer;
+                    input.className = 'answer-input correct';
+                }
+                block.appendChild(input);
+
+                var message = document.createElement('div');
+                message.className = 'message';
+                message.id = 'message-' + task.id;
+                block.appendChild(message);
+
+                var btnContainer = document.createElement('div');
+                btnContainer.style.marginTop = '10px';
+
+                var btnCheck = document.createElement('button');
+                btnCheck.className = 'btn-check';
+                btnCheck.textContent = 'Проверить';
+                btnCheck.id = 'btn-check-' + task.id;
+                btnCheck.disabled = isCompleted;
+                btnCheck.onclick = function(taskId) {
+                    return function() { checkAnswer(taskId); };
+                }(task.id);
+                btnContainer.appendChild(btnCheck);
+
+                var btnSolved = document.createElement('button');
+                btnSolved.className = 'btn-solved' + (isCompleted ? ' marked' : '');                btnSolved.textContent = isCompleted ? '✓ решено' : 'решено';
+                btnSolved.onclick = function(taskId) {
+                    return function() { toggleSolved(taskId); };
+                }(task.id);
+                btnContainer.appendChild(btnSolved);
+
+                block.appendChild(btnContainer);
+                container.appendChild(block);
+            }
+
+            updateCounter();
+        }
+
+        function checkAnswer(taskId) {
+            var task = null;
+            for (var i = 0; i < tasks.length; i++) {
+                if (tasks[i].id === taskId) { task = tasks[i]; break; }
+            }
+            if (!task) return;
+
+            var input = document.getElementById('input-' + taskId);
+            var message = document.getElementById('message-' + taskId);
+            var btnCheck = document.getElementById('btn-check-' + taskId);
+            
+            var userAnswer = input.value.trim().toLowerCase().replace(/\s/g, '');
+            var correctAnswer = task.answer.toLowerCase().replace(/\s/g, '');
+
+            if (!userAnswer) {
+                message.textContent = 'Введите ответ!';
+                message.className = 'message error show';
+                return;
+            }
+
+            if (userAnswer === correctAnswer) {
+                input.className = 'answer-input correct';
+                message.textContent = '✓ Правильно! Задание отмечено как решённое.';
+                message.className = 'message success show';
+                input.disabled = true;
+                btnCheck.disabled = true;
+                
+                if (!completedTasks[taskId]) {
+                    completedTasks[taskId] = true;
+                    saveCompletedTasks();
+                    renderTasks();
+                }
+            } else {
+                input.className = 'answer-input wrong';
+                message.textContent = '✗ Неправильно. Попробуйте ещё раз.';
+                message.className = 'message error show';
+                setTimeout(function() {                    input.className = 'answer-input';
+                    message.classList.remove('show');
+                }, 2000);
+            }
+        }
+
+        function toggleSolved(taskId) {
+            if (completedTasks[taskId]) {
+                delete completedTasks[taskId];
+            } else {
+                completedTasks[taskId] = true;
+            }
+            saveCompletedTasks();
+            renderTasks();
+        }
+
+        function toggleSort() {
+            sortUnsolvedFirst = !sortUnsolvedFirst;
+            document.getElementById('sortArrow').textContent = sortUnsolvedFirst ? '↑' : '↓';
+            document.getElementById('sortText').textContent = sortUnsolvedFirst ? 'Сначала не решённые' : 'Сортировка';
+            renderTasks();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCompletedTasks();
+            renderTasks();
+            
+            document.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    var activeInput = document.activeElement;
+                    if (activeInput && activeInput.classList.contains('answer-input')) {
+                        var taskId = parseInt(activeInput.id.replace('input-', ''));
+                        checkAnswer(taskId);
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
