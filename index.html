@@ -32,7 +32,7 @@
         }
         
         .container {
-            max-width: 600px;
+            max-width: 800px;
             margin: 0 auto;
             padding: 20px 15px;
         }
@@ -56,10 +56,20 @@
             font-size: 14px;
         }
         
+        .section-title {
+            font-size: 20px;
+            color: #0d4f4f;
+            margin: 30px 0 15px 0;
+            font-weight: 600;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #0d4f4f;
+        }
+        
         .task-list {
             display: flex;
             flex-direction: column;
             gap: 15px;
+            margin-bottom: 30px;
         }
         
         .task-card {
@@ -86,8 +96,7 @@
             color: #0d4f4f;
             margin-bottom: 8px;
         }
-        
-        .task-name {
+                .task-name {
             font-size: 16px;
             color: #333;
             margin-bottom: 5px;
@@ -96,7 +105,8 @@
         
         .task-desc {
             font-size: 13px;
-            color: #888;        }
+            color: #888;
+        }
         
         .task-count {
             font-size: 12px;
@@ -105,12 +115,58 @@
             font-weight: 500;
         }
         
+        .basic-tasks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+        }
+        
+        .basic-task-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            text-align: center;
+            border: 2px solid transparent;
+        }
+        
+        .basic-task-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+            border-color: #0d4f4f;
+        }
+        
+        .basic-task-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #0d4f4f;
+            margin-bottom: 5px;        }
+        
+        .basic-task-label {
+            font-size: 12px;
+            color: #666;
+        }
+        
         @media (min-width: 768px) {
             .container {
                 padding: 30px 20px;
             }
             .welcome h2 {
                 font-size: 28px;
+            }
+            .basic-tasks-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .basic-tasks-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
             }
         }
     </style>
@@ -126,6 +182,7 @@
             <p>Выберите задание для тренировки</p>
         </div>
         
+        <h3 class="section-title">📚 Основные задания</h3>
         <div class="task-list">
             <a href="task13.html" class="task-card">
                 <div class="task-number">13</div>
@@ -137,15 +194,70 @@
             <a href="task15.html" class="task-card">
                 <div class="task-number">15</div>
                 <div class="task-name">Неравенства</div>
-                <div class="task-desc">Рациональные, показательные и логарифмические неравенства</div>
-                <div class="task-count">📚 146 заданий</div>
+                <div class="task-desc">Рациональные, показательные и логарифмические неравенства</div>                <div class="task-count">📚 146 заданий</div>
             </a>
             
             <a href="task16.html" class="task-card">
                 <div class="task-number">16</div>
                 <div class="task-name">Экономические задачи</div>
                 <div class="task-desc">Задачи на кредиты, вклады и оптимизацию</div>
-                <div class="task-count">📚 118 заданий</div>            </a>
+                <div class="task-count">📚 118 заданий</div>
+            </a>
+        </div>
+        
+        <h3 class="section-title">🔢 Задания 1-16</h3>
+        <div class="basic-tasks-grid">
+            <a href="task1.html" class="basic-task-card">
+                <div class="basic-task-number">1</div>
+                <div class="basic-task-label">Простые уравнения</div>
+            </a>
+            <a href="task2.html" class="basic-task-card">
+                <div class="basic-task-number">2</div>
+                <div class="basic-task-label">Вычисления</div>
+            </a>
+            <a href="task3.html" class="basic-task-card">
+                <div class="basic-task-number">3</div>
+                <div class="basic-task-label">Геометрия</div>
+            </a>
+            <a href="task4.html" class="basic-task-card">
+                <div class="basic-task-number">4</div>
+                <div class="basic-task-label">Теория вероятностей</div>
+            </a>
+            <a href="task5.html" class="basic-task-card">
+                <div class="basic-task-number">5</div>
+                <div class="basic-task-label">Уравнения</div>
+            </a>
+            <a href="task6.html" class="basic-task-card">
+                <div class="basic-task-number">6</div>
+                <div class="basic-task-label">Геометрия</div>
+            </a>
+            <a href="task7.html" class="basic-task-card">
+                <div class="basic-task-number">7</div>
+                <div class="basic-task-label">Производная</div>
+            </a>
+            <a href="task8.html" class="basic-task-card">
+                <div class="basic-task-number">8</div>
+                <div class="basic-task-label">Стереометрия</div>
+            </a>
+            <a href="task9.html" class="basic-task-card">
+                <div class="basic-task-number">9</div>
+                <div class="basic-task-label">Графики функций</div>
+            </a>
+            <a href="task10.html" class="basic-task-card">                <div class="basic-task-number">10</div>
+                <div class="basic-task-label">Прикладные задачи</div>
+            </a>
+            <a href="task11.html" class="basic-task-card">
+                <div class="basic-task-number">11</div>
+                <div class="basic-task-label">Текстовые задачи</div>
+            </a>
+            <a href="task12.html" class="basic-task-card">
+                <div class="basic-task-number">12</div>
+                <div class="basic-task-label">Наибольшее/наименьшее</div>
+            </a>
+            <a href="task14.html" class="basic-task-card">
+                <div class="basic-task-number">14</div>
+                <div class="basic-task-label">Стереометрия</div>
+            </a>
         </div>
     </div>
 </body>
