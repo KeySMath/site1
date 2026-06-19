@@ -149,176 +149,176 @@
     <div class="tasks-container" id="tasksContainer"></div>
 
     <script>
-        // SVG рисунки для разных типов задач
+        // Улучшенные SVG рисунки для разных типов задач
         const figures = {
             // Равнобедренный треугольник (1-12)
-            isosceles: `<svg width="200" height="150" viewBox="0 0 200 150">
-                <polygon points="100,20 40,130 160,130" fill="none" stroke="#0d4f4f" stroke-width="2"/>
-                <text x="95" y="15" font-size="14" font-family="Times New Roman">C</text>
-                <text x="30" y="145" font-size="14" font-family="Times New Roman">A</text>
-                <text x="165" y="145" font-size="14" font-family="Times New Roman">B</text>
+            isosceles: `<svg width="220" height="180" viewBox="0 0 220 180">
+                <polygon points="110,25 50,155 170,155" fill="none" stroke="#000" stroke-width="1.5"/>
+                <text x="105" y="20" font-size="16" font-family="Times New Roman">C</text>
+                <text x="40" y="175" font-size="16" font-family="Times New Roman">A</text>
+                <text x="175" y="175" font-size="16" font-family="Times New Roman">B</text>
             </svg>`,
             
-            // Прямоугольный треугольник с медианой/биссектрисой/высотой (13-34)
-            rightTriangleMedian: `<svg width="200" height="150" viewBox="0 0 200 150">
-                <polygon points="40,130 160,130 160,20" fill="none" stroke="#0d4f4f" stroke-width="2"/>
-                <line x1="160" y1="20" x2="100" y2="130" stroke="#c0392b" stroke-width="1.5" stroke-dasharray="4"/>
-                <line x1="160" y1="20" x2="130" y2="75" stroke="#27ae60" stroke-width="1.5" stroke-dasharray="4"/>
-                <text x="30" y="145" font-size="14" font-family="Times New Roman">A</text>
-                <text x="165" y="145" font-size="14" font-family="Times New Roman">B</text>
-                <text x="165" y="15" font-size="14" font-family="Times New Roman">C</text>
-                <text x="95" y="145" font-size="12" font-family="Times New Roman">M</text>
-                <text x="135" y="70" font-size="12" font-family="Times New Roman">D</text>
-                <rect x="150" y="120" width="10" height="10" fill="none" stroke="#0d4f4f" stroke-width="1"/>
+            // Прямоугольный треугольник с медианой (13-34)
+            rightTriangleMedian: `<svg width="220" height="180" viewBox="0 0 220 180">
+                <polygon points="50,155 170,155 170,25" fill="none" stroke="#000" stroke-width="1.5"/>
+                <line x1="170" y1="25" x2="110" y2="155" stroke="#000" stroke-width="1" stroke-dasharray="3,2"/>
+                <line x1="170" y1="25" x2="140" y2="90" stroke="#000" stroke-width="1" stroke-dasharray="3,2"/>
+                <text x="40" y="175" font-size="16" font-family="Times New Roman">A</text>
+                <text x="175" y="175" font-size="16" font-family="Times New Roman">B</text>
+                <text x="175" y="20" font-size="16" font-family="Times New Roman">C</text>
+                <text x="105" y="175" font-size="14" font-family="Times New Roman">M</text>
+                <text x="145" y="85" font-size="14" font-family="Times New Roman">D</text>
+                <rect x="160" y="145" width="10" height="10" fill="none" stroke="#000" stroke-width="1"/>
             </svg>`,
             
-            // Треугольник с биссектрисой (35-46)
-            triangleBisector: `<svg width="200" height="150" viewBox="0 0 200 150">
-                <polygon points="100,20 40,130 160,130" fill="none" stroke="#0d4f4f" stroke-width="2"/>
-                <line x1="100" y1="20" x2="120" y2="130" stroke="#c0392b" stroke-width="1.5" stroke-dasharray="4"/>
-                <line x1="40" y1="130" x2="130" y2="60" stroke="#27ae60" stroke-width="1.5" stroke-dasharray="4"/>
-                <text x="95" y="15" font-size="14" font-family="Times New Roman">A</text>
-                <text x="30" y="145" font-size="14" font-family="Times New Roman">B</text>
-                <text x="165" y="145" font-size="14" font-family="Times New Roman">C</text>
-                <text x="125" y="145" font-size="12" font-family="Times New Roman">D</text>
-                <text x="135" y="55" font-size="12" font-family="Times New Roman">E</text>
-                <text x="110" y="95" font-size="12" font-family="Times New Roman">O</text>
+            // Треугольник с биссектрисами и высотами (35-46)
+            triangleBisector: `<svg width="220" height="180" viewBox="0 0 220 180">
+                <polygon points="110,25 50,155 170,155" fill="none" stroke="#000" stroke-width="1.5"/>
+                <line x1="110" y1="25" x2="130" y2="155" stroke="#000" stroke-width="1" stroke-dasharray="3,2"/>
+                <line x1="50" y1="155" x2="140" y2="85" stroke="#000" stroke-width="1" stroke-dasharray="3,2"/>
+                <text x="105" y="20" font-size="16" font-family="Times New Roman">A</text>
+                <text x="40" y="175" font-size="16" font-family="Times New Roman">B</text>
+                <text x="175" y="175" font-size="16" font-family="Times New Roman">C</text>
+                <text x="135" y="175" font-size="14" font-family="Times New Roman">D</text>
+                <text x="145" y="80" font-size="14" font-family="Times New Roman">E</text>
+                <text x="120" y="110" font-size="14" font-family="Times New Roman">O</text>
             </svg>`,
             
             // Параллелограмм (47-50)
-            parallelogram: `<svg width="200" height="120" viewBox="0 0 200 120">
-                <polygon points="40,100 160,100 180,20 60,20" fill="none" stroke="#0d4f4f" stroke-width="2"/>
-                <text x="30" y="115" font-size="14" font-family="Times New Roman">A</text>
-                <text x="165" y="115" font-size="14" font-family="Times New Roman">B</text>
-                <text x="185" y="15" font-size="14" font-family="Times New Roman">C</text>
-                <text x="50" y="15" font-size="14" font-family="Times New Roman">D</text>
+            parallelogram: `<svg width="220" height="140" viewBox="0 0 220 140">
+                <polygon points="50,120 170,120 190,20 70,20" fill="none" stroke="#000" stroke-width="1.5"/>
+                <text x="40" y="138" font-size="16" font-family="Times New Roman">A</text>
+                <text x="175" y="138" font-size="16" font-family="Times New Roman">B</text>
+                <text x="195" y="15" font-size="16" font-family="Times New Roman">C</text>
+                <text x="60" y="15" font-size="16" font-family="Times New Roman">D</text>
             </svg>`,
             
-            // Ромб (51-54)            rhombus: `<svg width="200" height="150" viewBox="0 0 200 150">
-                <polygon points="100,20 180,75 100,130 20,75" fill="none" stroke="#0d4f4f" stroke-width="2"/>
-                <line x1="100" y1="20" x2="100" y2="130" stroke="#c0392b" stroke-width="1.5" stroke-dasharray="4"/>
-                <line x1="20" y1="75" x2="180" y2="75" stroke="#27ae60" stroke-width="1.5" stroke-dasharray="4"/>
-                <text x="95" y="15" font-size="14" font-family="Times New Roman">D</text>
-                <text x="185" y="80" font-size="14" font-family="Times New Roman">C</text>
-                <text x="95" y="145" font-size="14" font-family="Times New Roman">B</text>
-                <text x="5" y="80" font-size="14" font-family="Times New Roman">A</text>
+            // Ромб (51-54)            rhombus: `<svg width="220" height="180" viewBox="0 0 220 180">
+                <polygon points="110,25 190,90 110,155 30,90" fill="none" stroke="#000" stroke-width="1.5"/>
+                <line x1="110" y1="25" x2="110" y2="155" stroke="#000" stroke-width="1" stroke-dasharray="3,2"/>
+                <line x1="30" y1="90" x2="190" y2="90" stroke="#000" stroke-width="1" stroke-dasharray="3,2"/>
+                <text x="105" y="20" font-size="16" font-family="Times New Roman">D</text>
+                <text x="195" y="95" font-size="16" font-family="Times New Roman">C</text>
+                <text x="105" y="175" font-size="16" font-family="Times New Roman">B</text>
+                <text x="15" y="95" font-size="16" font-family="Times New Roman">A</text>
             </svg>`,
             
             // Параллелограмм с высотой (55-66)
-            parallelogramHeight: `<svg width="200" height="120" viewBox="0 0 200 120">
-                <polygon points="40,100 160,100 180,20 60,20" fill="none" stroke="#0d4f4f" stroke-width="2"/>
-                <line x1="100" y1="100" x2="100" y2="20" stroke="#c0392b" stroke-width="1.5" stroke-dasharray="4"/>
-                <rect x="95" y="95" width="10" height="10" fill="none" stroke="#c0392b" stroke-width="1"/>
-                <text x="30" y="115" font-size="14" font-family="Times New Roman">A</text>
-                <text x="165" y="115" font-size="14" font-family="Times New Roman">B</text>
-                <text x="185" y="15" font-size="14" font-family="Times New Roman">C</text>
-                <text x="50" y="15" font-size="14" font-family="Times New Roman">D</text>
+            parallelogramHeight: `<svg width="220" height="140" viewBox="0 0 220 140">
+                <polygon points="50,120 170,120 190,20 70,20" fill="none" stroke="#000" stroke-width="1.5"/>
+                <line x1="110" y1="120" x2="110" y2="20" stroke="#000" stroke-width="1" stroke-dasharray="3,2"/>
+                <rect x="105" y="115" width="10" height="10" fill="none" stroke="#000" stroke-width="1"/>
+                <text x="40" y="138" font-size="16" font-family="Times New Roman">A</text>
+                <text x="175" y="138" font-size="16" font-family="Times New Roman">B</text>
+                <text x="195" y="15" font-size="16" font-family="Times New Roman">C</text>
+                <text x="60" y="15" font-size="16" font-family="Times New Roman">D</text>
             </svg>`,
             
-            // Равнобедренный треугольник с высотой (67-74)
-            isoscelesHeight: `<svg width="200" height="150" viewBox="0 0 200 150">
-                <polygon points="100,20 40,130 160,130" fill="none" stroke="#0d4f4f" stroke-width="2"/>
-                <line x1="100" y1="20" x2="100" y2="130" stroke="#c0392b" stroke-width="1.5" stroke-dasharray="4"/>
-                <rect x="95" y="125" width="10" height="10" fill="none" stroke="#c0392b" stroke-width="1"/>
-                <text x="95" y="15" font-size="14" font-family="Times New Roman">C</text>
-                <text x="30" y="145" font-size="14" font-family="Times New Roman">A</text>
-                <text x="165" y="145" font-size="14" font-family="Times New Roman">B</text>
-                <text x="105" y="145" font-size="12" font-family="Times New Roman">H</text>
+            // Равнобедренный треугольник с высотой (67-74, 113-128)
+            isoscelesHeight: `<svg width="220" height="180" viewBox="0 0 220 180">
+                <polygon points="110,25 50,155 170,155" fill="none" stroke="#000" stroke-width="1.5"/>
+                <line x1="110" y1="25" x2="110" y2="155" stroke="#000" stroke-width="1" stroke-dasharray="3,2"/>
+                <rect x="105" y="150" width="10" height="10" fill="none" stroke="#000" stroke-width="1"/>
+                <text x="105" y="20" font-size="16" font-family="Times New Roman">C</text>
+                <text x="40" y="175" font-size="16" font-family="Times New Roman">A</text>
+                <text x="175" y="175" font-size="16" font-family="Times New Roman">B</text>
+                <text x="115" y="175" font-size="14" font-family="Times New Roman">H</text>
             </svg>`,
             
             // Треугольник со средней линией (75-86)
-            triangleMidline: `<svg width="200" height="150" viewBox="0 0 200 150">
-                <polygon points="100,20 40,130 160,130" fill="none" stroke="#0d4f4f" stroke-width="2"/>
-                <line x1="70" y1="75" x2="130" y2="75" stroke="#c0392b" stroke-width="1.5" stroke-dasharray="4"/>
-                <text x="95" y="15" font-size="14" font-family="Times New Roman">C</text>
-                <text x="30" y="145" font-size="14" font-family="Times New Roman">A</text>
-                <text x="165" y="145" font-size="14" font-family="Times New Roman">B</text>
-                <text x="60" y="70" font-size="12" font-family="Times New Roman">D</text>
-                <text x="135" y="70" font-size="12" font-family="Times New Roman">E</text>
+            triangleMidline: `<svg width="220" height="180" viewBox="0 0 220 180">
+                <polygon points="110,25 50,155 170,155" fill="none" stroke="#000" stroke-width="1.5"/>
+                <line x1="80" y1="90" x2="140" y2="90" stroke="#000" stroke-width="1" stroke-dasharray="3,2"/>
+                <text x="105" y="20" font-size="16" font-family="Times New Roman">C</text>
+                <text x="40" y="175" font-size="16" font-family="Times New Roman">A</text>
+                <text x="175" y="175" font-size="16" font-family="Times New Roman">B</text>
+                <text x="70" y="85" font-size="14" font-family="Times New Roman">D</text>
+                <text x="145" y="85" font-size="14" font-family="Times New Roman">E</text>
             </svg>`,
             
-            // Прямоугольный треугольник с тригонометрией (87-128)
-            rightTriangle: `<svg width="200" height="150" viewBox="0 0 200 150">
-                <polygon points="40,130 160,130 160,20" fill="none" stroke="#0d4f4f" stroke-width="2"/>
-                <rect x="150" y="120" width="10" height="10" fill="none" stroke="#0d4f4f" stroke-width="1"/>
-                <text x="30" y="145" font-size="14" font-family="Times New Roman">A</text>
-                <text x="165" y="145" font-size="14" font-family="Times New Roman">B</text>
-                <text x="165" y="15" font-size="14" font-family="Times New Roman">C</text>            </svg>`,
+            // Прямоугольный треугольник (87-112)
+            rightTriangle: `<svg width="220" height="180" viewBox="0 0 220 180">
+                <polygon points="50,155 170,155 170,25" fill="none" stroke="#000" stroke-width="1.5"/>
+                <rect x="160" y="145" width="10" height="10" fill="none" stroke="#000" stroke-width="1"/>
+                <text x="40" y="175" font-size="16" font-family="Times New Roman">A</text>
+                <text x="175" y="175" font-size="16" font-family="Times New Roman">B</text>
+                <text x="175" y="20" font-size="16" font-family="Times New Roman">C</text>            </svg>`,
             
             // Окружность с центральным углом (129-144)
-            circleCentral: `<svg width="200" height="200" viewBox="0 0 200 200">
-                <circle cx="100" cy="100" r="80" fill="none" stroke="#0d4f4f" stroke-width="2"/>
-                <line x1="100" y1="100" x2="180" y2="100" stroke="#0d4f4f" stroke-width="1.5"/>
-                <line x1="100" y1="100" x2="43" y2="43" stroke="#0d4f4f" stroke-width="1.5"/>
-                <circle cx="100" cy="100" r="3" fill="#0d4f4f"/>
-                <text x="95" y="95" font-size="14" font-family="Times New Roman">O</text>
-                <text x="185" y="105" font-size="14" font-family="Times New Roman">A</text>
-                <text x="30" y="40" font-size="14" font-family="Times New Roman">B</text>
+            circleCentral: `<svg width="220" height="220" viewBox="0 0 220 220">
+                <circle cx="110" cy="110" r="90" fill="none" stroke="#000" stroke-width="1.5"/>
+                <line x1="110" y1="110" x2="200" y2="110" stroke="#000" stroke-width="1.2"/>
+                <line x1="110" y1="110" x2="46" y2="46" stroke="#000" stroke-width="1.2"/>
+                <circle cx="110" cy="110" r="3" fill="#000"/>
+                <text x="105" y="105" font-size="16" font-family="Times New Roman">O</text>
+                <text x="205" y="115" font-size="16" font-family="Times New Roman">A</text>
+                <text x="35" y="45" font-size="16" font-family="Times New Roman">B</text>
             </svg>`,
             
-            // Окружность с вписанным углом (145-152)
-            circleInscribed: `<svg width="200" height="200" viewBox="0 0 200 200">
-                <circle cx="100" cy="100" r="80" fill="none" stroke="#0d4f4f" stroke-width="2"/>
-                <line x1="40" y1="60" x2="160" y2="60" stroke="#0d4f4f" stroke-width="1.5"/>
-                <line x1="40" y1="60" x2="100" y2="160" stroke="#0d4f4f" stroke-width="1.5"/>
-                <line x1="160" y1="60" x2="100" y2="160" stroke="#0d4f4f" stroke-width="1.5"/>
-                <text x="30" y="55" font-size="14" font-family="Times New Roman">A</text>
-                <text x="165" y="55" font-size="14" font-family="Times New Roman">B</text>
-                <text x="105" y="175" font-size="14" font-family="Times New Roman">C</text>
+            // Окружность с вписанным углом (145-152, 169-172)
+            circleInscribed: `<svg width="220" height="220" viewBox="0 0 220 220">
+                <circle cx="110" cy="110" r="90" fill="none" stroke="#000" stroke-width="1.5"/>
+                <line x1="50" y1="70" x2="170" y2="70" stroke="#000" stroke-width="1.2"/>
+                <line x1="50" y1="70" x2="110" y2="180" stroke="#000" stroke-width="1.2"/>
+                <line x1="170" y1="70" x2="110" y2="180" stroke="#000" stroke-width="1.2"/>
+                <text x="40" y="65" font-size="16" font-family="Times New Roman">A</text>
+                <text x="175" y="65" font-size="16" font-family="Times New Roman">B</text>
+                <text x="115" y="195" font-size="16" font-family="Times New Roman">C</text>
             </svg>`,
             
             // Окружность с касательной (153-164)
-            circleTangent: `<svg width="200" height="200" viewBox="0 0 200 200">
-                <circle cx="100" cy="100" r="60" fill="none" stroke="#0d4f4f" stroke-width="2"/>
-                <line x1="40" y1="160" x2="160" y2="40" stroke="#0d4f4f" stroke-width="1.5"/>
-                <line x1="40" y1="160" x2="100" y2="100" stroke="#c0392b" stroke-width="1.5" stroke-dasharray="4"/>
-                <circle cx="100" cy="100" r="3" fill="#0d4f4f"/>
-                <text x="30" y="175" font-size="14" font-family="Times New Roman">C</text>
-                <text x="165" y="35" font-size="14" font-family="Times New Roman">A</text>
-                <text x="105" y="95" font-size="14" font-family="Times New Roman">O</text>
-                <text x="115" y="115" font-size="12" font-family="Times New Roman">B</text>
+            circleTangent: `<svg width="220" height="220" viewBox="0 0 220 220">
+                <circle cx="110" cy="110" r="70" fill="none" stroke="#000" stroke-width="1.5"/>
+                <line x1="50" y1="180" x2="170" y2="40" stroke="#000" stroke-width="1.2"/>
+                <line x1="50" y1="180" x2="110" y2="110" stroke="#000" stroke-width="1" stroke-dasharray="3,2"/>
+                <circle cx="110" cy="110" r="3" fill="#000"/>
+                <text x="40" y="195" font-size="16" font-family="Times New Roman">C</text>
+                <text x="175" y="35" font-size="16" font-family="Times New Roman">A</text>
+                <text x="115" y="105" font-size="16" font-family="Times New Roman">O</text>
+                <text x="125" y="125" font-size="14" font-family="Times New Roman">B</text>
             </svg>`,
             
             // Окружность с двумя касательными (165-168)
-            circleTwoTangents: `<svg width="200" height="200" viewBox="0 0 200 200">
-                <circle cx="100" cy="100" r="60" fill="none" stroke="#0d4f4f" stroke-width="2"/>
-                <line x1="40" y1="180" x2="100" y2="40" stroke="#0d4f4f" stroke-width="1.5"/>
-                <line x1="160" y1="180" x2="100" y2="40" stroke="#0d4f4f" stroke-width="1.5"/>
-                <circle cx="100" cy="100" r="3" fill="#0d4f4f"/>
-                <text x="30" y="195" font-size="14" font-family="Times New Roman">A</text>
-                <text x="165" y="195" font-size="14" font-family="Times New Roman">B</text>
-                <text x="105" y="35" font-size="14" font-family="Times New Roman">C</text>
-                <text x="105" y="95" font-size="14" font-family="Times New Roman">O</text>
+            circleTwoTangents: `<svg width="220" height="220" viewBox="0 0 220 220">
+                <circle cx="110" cy="110" r="70" fill="none" stroke="#000" stroke-width="1.5"/>
+                <line x1="50" y1="190" x2="110" y2="40" stroke="#000" stroke-width="1.2"/>
+                <line x1="170" y1="190" x2="110" y2="40" stroke="#000" stroke-width="1.2"/>
+                <circle cx="110" cy="110" r="3" fill="#000"/>
+                <text x="40" y="205" font-size="16" font-family="Times New Roman">A</text>
+                <text x="175" y="205" font-size="16" font-family="Times New Roman">B</text>
+                <text x="115" y="35" font-size="16" font-family="Times New Roman">C</text>
+                <text x="115" y="105" font-size="16" font-family="Times New Roman">O</text>
             </svg>`,
             
             // Четырёхугольник с вписанной окружностью (173-188)
-            quadInscribed: `<svg width="200" height="150" viewBox="0 0 200 150">                <polygon points="40,130 160,130 180,20 20,20" fill="none" stroke="#0d4f4f" stroke-width="2"/>
-                <circle cx="100" cy="75" r="40" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-dasharray="4"/>
-                <text x="30" y="145" font-size="14" font-family="Times New Roman">A</text>
-                <text x="165" y="145" font-size="14" font-family="Times New Roman">B</text>
-                <text x="185" y="15" font-size="14" font-family="Times New Roman">C</text>
-                <text x="5" y="15" font-size="14" font-family="Times New Roman">D</text>
+            quadInscribed: `<svg width="220" height="180" viewBox="0 0 220 180">                <polygon points="50,155 170,155 190,25 30,25" fill="none" stroke="#000" stroke-width="1.5"/>
+                <circle cx="110" cy="90" r="50" fill="none" stroke="#000" stroke-width="1" stroke-dasharray="3,2"/>
+                <text x="40" y="175" font-size="16" font-family="Times New Roman">A</text>
+                <text x="175" y="175" font-size="16" font-family="Times New Roman">B</text>
+                <text x="195" y="20" font-size="16" font-family="Times New Roman">C</text>
+                <text x="15" y="20" font-size="16" font-family="Times New Roman">D</text>
             </svg>`,
             
             // Четырёхугольник вписанный в окружность (189-212)
-            quadCircumscribed: `<svg width="200" height="200" viewBox="0 0 200 200">
-                <circle cx="100" cy="100" r="80" fill="none" stroke="#0d4f4f" stroke-width="2"/>
-                <polygon points="40,60 160,60 180,140 20,140" fill="none" stroke="#0d4f4f" stroke-width="2"/>
-                <text x="30" y="55" font-size="14" font-family="Times New Roman">A</text>
-                <text x="165" y="55" font-size="14" font-family="Times New Roman">B</text>
-                <text x="185" y="155" font-size="14" font-family="Times New Roman">C</text>
-                <text x="5" y="155" font-size="14" font-family="Times New Roman">D</text>
+            quadCircumscribed: `<svg width="220" height="220" viewBox="0 0 220 220">
+                <circle cx="110" cy="110" r="90" fill="none" stroke="#000" stroke-width="1.5"/>
+                <polygon points="50,70 170,70 190,155 30,155" fill="none" stroke="#000" stroke-width="1.5"/>
+                <text x="40" y="65" font-size="16" font-family="Times New Roman">A</text>
+                <text x="175" y="65" font-size="16" font-family="Times New Roman">B</text>
+                <text x="195" y="170" font-size="16" font-family="Times New Roman">C</text>
+                <text x="15" y="170" font-size="16" font-family="Times New Roman">D</text>
             </svg>`,
             
             // Треугольник с описанной окружностью (213-216)
-            triangleCircumscribed: `<svg width="200" height="200" viewBox="0 0 200 200">
-                <circle cx="100" cy="100" r="80" fill="none" stroke="#0d4f4f" stroke-width="2"/>
-                <polygon points="100,20 40,160 160,160" fill="none" stroke="#0d4f4f" stroke-width="2"/>
-                <circle cx="100" cy="100" r="3" fill="#0d4f4f"/>
-                <text x="95" y="15" font-size="14" font-family="Times New Roman">C</text>
-                <text x="30" y="175" font-size="14" font-family="Times New Roman">A</text>
-                <text x="165" y="175" font-size="14" font-family="Times New Roman">B</text>
-                <text x="105" y="95" font-size="14" font-family="Times New Roman">O</text>
+            triangleCircumscribed: `<svg width="220" height="220" viewBox="0 0 220 220">
+                <circle cx="110" cy="110" r="90" fill="none" stroke="#000" stroke-width="1.5"/>
+                <polygon points="110,25 50,180 170,180" fill="none" stroke="#000" stroke-width="1.5"/>
+                <circle cx="110" cy="110" r="3" fill="#000"/>
+                <text x="105" y="20" font-size="16" font-family="Times New Roman">C</text>
+                <text x="40" y="195" font-size="16" font-family="Times New Roman">A</text>
+                <text x="175" y="195" font-size="16" font-family="Times New Roman">B</text>
+                <text x="115" y="105" font-size="16" font-family="Times New Roman">O</text>
             </svg>`
         };
 
@@ -694,7 +694,7 @@
                 }
             } else {
                 input.className = 'answer-input wrong';
-                message.textContent = ' Неправильно. Попробуйте ещё раз.';
+                message.textContent = '✗ Неправильно. Попробуйте ещё раз.';
                 message.className = 'message error show';
                 setTimeout(function() {
                     input.className = 'answer-input';
